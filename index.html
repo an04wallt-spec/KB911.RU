@@ -5,9 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>КБ911 — разработка мебели</title>
 <style>
+  @font-face{
+    font-family:"Bahnschrift Local";
+    src:local("Bahnschrift");
+    font-style:normal;
+    font-weight:100 900;
+  }
+
   :root{--ink:#111;--paper:#fff;--bg:#f2f2f0}
   *{box-sizing:border-box}
-  html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+  html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"Bahnschrift Local","Bahnschrift","Arial Narrow",Arial,sans-serif}
   body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:18px}
 
   .sheet{position:relative;width:min(1500px,100%);aspect-ratio:420/297;min-height:690px;background:var(--paper);box-shadow:0 14px 44px rgba(0,0,0,.08);overflow:hidden}
@@ -16,10 +23,16 @@
   /* Правая графа рамки — основная навигация */
   .stamp{position:absolute;top:17px;right:17px;bottom:17px;width:164px;padding-left:7px;border-left:1.3px solid var(--ink);display:flex;flex-direction:column;gap:7px;opacity:0;animation:stampIn .65s ease .8s forwards;z-index:3}
   .box{border:1px solid var(--ink);background:#fff}
-  .site-box{height:22px;display:flex;align-items:center;justify-content:space-between;padding:0 7px;font-size:7px;font-style:italic}
-  .site-box .year{font-style:normal;font-size:6px}
-  .project-box{min-height:92px;padding:8px 7px;font-size:7px;line-height:1.45}
-  .materials-box{min-height:112px;padding:8px 7px;font-size:7px;line-height:1.45}
+
+  .site-box{height:22px;display:flex;align-items:center;justify-content:space-between;padding:0 7px;font-size:12px;font-style:italic;white-space:nowrap}
+  .site-box .year{font-style:normal;font-size:7px;margin-left:8px;flex:0 0 auto}
+
+  .project-box{min-height:126px;padding:0;font-size:12px;font-style:italic;line-height:1.2}
+  .project-row{height:42px;padding:8px 7px;border-bottom:1px solid var(--ink)}
+  .project-row:last-child{border-bottom:0}
+
+  .materials-box{min-height:170px;padding:9px 7px;font-size:12px;font-style:italic;line-height:1.2}
+
   .stamp-nav{flex:1;display:flex;flex-direction:column;gap:8px}
   .nav-btn{min-height:54px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--ink);text-decoration:none;transition:background .18s ease,color .18s ease,transform .18s ease}
   .nav-btn:hover{background:#111;color:#fff;transform:translateX(-4px)}
@@ -46,10 +59,11 @@
     .sheet{width:100%;min-height:100dvh;aspect-ratio:auto;box-shadow:none}
     .drawing-frame{inset:10px}
     .stamp{top:10px;right:10px;bottom:10px;width:44%;min-width:160px;padding-left:5px;gap:5px}
-    .site-box{height:20px;padding:0 5px;font-size:6px}
-    .site-box .year{font-size:5px}
-    .project-box{min-height:80px;padding:6px 5px;font-size:5.8px;line-height:1.35}
-    .materials-box{min-height:88px;padding:6px 5px;font-size:5.8px;line-height:1.35}
+    .site-box{height:20px;padding:0 5px;font-size:10px}
+    .site-box .year{font-size:6px}
+    .project-box{min-height:111px;font-size:9px}
+    .project-row{height:37px;padding:7px 5px}
+    .materials-box{min-height:145px;padding:7px 5px;font-size:9px}
     .stamp-nav{gap:5px}
     .nav-btn{min-height:40px;padding:6px 7px}
     .nav-btn::after{font-size:14px}
@@ -81,21 +95,12 @@
       <div class="box site-box"><span>www.kb911.ru</span><span class="year">2026</span></div>
 
       <div class="box project-box">
-        <b>Проект:</b><br>
-        Сайт КБ911<br><br>
-        <b>Изделие:</b><br>
-        Мебель / РКД / 3D<br><br>
-        <b>Конструктор:</b><br>
-        Андрей
+        <div class="project-row">Проект:</div>
+        <div class="project-row">Изделие:</div>
+        <div class="project-row">конструктор:</div>
       </div>
 
-      <div class="box materials-box">
-        <b>Материалы:</b><br>
-        Информация<br>
-        по образцу<br><br>
-        -<br><br>
-        Навигация по разделам сайта
-      </div>
+      <div class="box materials-box">Материалы:</div>
 
       <nav class="stamp-nav" aria-label="Навигация">
         <a class="box nav-btn" href="#"><div><strong>Рабочие чертежи</strong><span>Примеры РКД и узлов</span></div></a>
