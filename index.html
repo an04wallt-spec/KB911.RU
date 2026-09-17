@@ -69,39 +69,77 @@ body{
 .frame-box,
 .nav-btn{
   position:relative;
-  background:#fff;
   min-width:0;
   min-height:0;
+  background:#fff;
 }
 
-.frame-svg{
+.reveal-frame{
   position:absolute;
   inset:0;
-  width:100%;
-  height:100%;
+  border:1px solid var(--ink);
   pointer-events:none;
-  overflow:visible;
 }
 
-.frame-path{
-  fill:none;
-  stroke:var(--ink);
-  stroke-width:1;
-  vector-effect:non-scaling-stroke;
-  stroke-linecap:square;
-  stroke-linejoin:miter;
-  opacity:1;
+.mask-side{
+  position:absolute;
+  z-index:5;
+  background:#fff;
+  pointer-events:none;
 }
 
-.frame-path.ready{
-  animation-name:drawFrame;
-  animation-timing-function:linear;
-  animation-fill-mode:forwards;
+.mask-top{
+  left:-2px;
+  right:-2px;
+  top:-2px;
+  height:5px;
+  transform-origin:right center;
+  transform:scaleX(1);
 }
 
-@keyframes drawFrame{
-  from{stroke-dashoffset:var(--path-len)}
-  to{stroke-dashoffset:0}
+.mask-right{
+  top:-2px;
+  bottom:-2px;
+  right:-2px;
+  width:5px;
+  transform-origin:center bottom;
+  transform:scaleY(1);
+}
+
+.mask-bottom{
+  left:-2px;
+  right:-2px;
+  bottom:-2px;
+  height:5px;
+  transform-origin:left center;
+  transform:scaleX(1);
+}
+
+.mask-left{
+  top:-2px;
+  bottom:-2px;
+  left:-2px;
+  width:5px;
+  transform-origin:center top;
+  transform:scaleY(1);
+}
+
+.mask-top.go,
+.mask-bottom.go{
+  animation:uncoverX linear forwards;
+}
+
+.mask-right.go,
+.mask-left.go{
+  animation:uncoverY linear forwards;
+}
+
+@keyframes uncoverX{
+  to{transform:scaleX(0)}
+}
+
+@keyframes uncoverY{
+  to{transform:scaleY(0)}
 }
 
 .project-separator{
@@ -114,8 +152,8 @@ body{
   transform-origin:left center;
 }
 
-.project-separator.ready{
-  animation:drawInner 1.2s linear forwards;
+.project-separator.go{
+  animation:drawInner 1s linear forwards;
 }
 
 .project-separator.one{top:33.333%}
@@ -247,7 +285,7 @@ body{
   max-width:760px;
   opacity:0;
   transform:translateY(8px);
-  animation:fadeUp .9s ease 4.7s forwards;
+  animation:fadeUp .9s ease 4.6s forwards;
 }
 
 .eyebrow{
@@ -392,8 +430,16 @@ body{
 }
 
 @media (prefers-reduced-motion:reduce){
-  .frame-path.ready,
-  .project-separator.ready,
+  .mask-side{
+    animation:none !important;
+    transform:scale(0) !important;
+  }
+
+  .project-separator{
+    animation:none !important;
+    transform:scaleX(1) !important;
+  }
+
   .box-content,
   .nav-content,
   .intro{
@@ -408,9 +454,12 @@ body{
 <main class="sheet">
 
   <section class="left-field" aria-label="Основное поле чертежа">
-    <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <path class="frame-path" data-delay="0.4" data-duration="5.8" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-    </svg>
+    <div class="reveal-frame" data-delay="0.35" data-duration="5.8">
+      <span class="mask-side mask-top"></span>
+      <span class="mask-side mask-right"></span>
+      <span class="mask-side mask-bottom"></span>
+      <span class="mask-side mask-left"></span>
+    </div>
   </section>
 
   <section class="main-content">
@@ -424,51 +473,106 @@ body{
   <aside class="right-column" aria-label="Информационные поля">
 
     <section class="frame-box">
-      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path class="frame-path" data-delay="0.4" data-duration="2.4" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-      </svg>
-      <div class="box-content site-content" style="animation-delay:2.45s"><span>www.kb911.ru</span><span class="year">2026</span></div>
+      <div class="reveal-frame" data-delay="0.35" data-duration="2.4">
+        <span class="mask-side mask-top"></span>
+        <span class="mask-side mask-right"></span>
+        <span class="mask-side mask-bottom"></span>
+        <span class="mask-side mask-left"></span>
+      </div>
+      <div class="box-content site-content" style="animation-delay:2.4s">
+        <span>www.kb911.ru</span>
+        <span class="year">2026</span>
+      </div>
     </section>
 
     <section class="frame-box">
-      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path class="frame-path" data-delay="2.0" data-duration="2.8" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-      </svg>
-      <div class="project-separator one" data-delay="3.3"></div>
-      <div class="project-separator two" data-delay="3.8"></div>
-      <div class="box-content project-content" style="animation-delay:4.7s"><div class="project-row">Проект:</div><div class="project-row">Изделие:</div><div class="project-row">конструктор:</div></div>
+      <div class="reveal-frame" data-delay="1.8" data-duration="2.8">
+        <span class="mask-side mask-top"></span>
+        <span class="mask-side mask-right"></span>
+        <span class="mask-side mask-bottom"></span>
+        <span class="mask-side mask-left"></span>
+      </div>
+      <div class="project-separator one" data-delay="3.05"></div>
+      <div class="project-separator two" data-delay="3.55"></div>
+      <div class="box-content project-content" style="animation-delay:4.4s">
+        <div class="project-row">Проект:</div>
+        <div class="project-row">Изделие:</div>
+        <div class="project-row">конструктор:</div>
+      </div>
     </section>
 
     <section class="frame-box">
-      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path class="frame-path" data-delay="4.1" data-duration="3.2" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-      </svg>
-      <div class="box-content materials-content" style="animation-delay:7.1s">Материалы:</div>
+      <div class="reveal-frame" data-delay="3.8" data-duration="3.1">
+        <span class="mask-side mask-top"></span>
+        <span class="mask-side mask-right"></span>
+        <span class="mask-side mask-bottom"></span>
+        <span class="mask-side mask-left"></span>
+      </div>
+      <div class="box-content materials-content" style="animation-delay:6.65s">
+        Материалы:
+      </div>
     </section>
 
     <a class="nav-btn" href="#">
-      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="frame-path" data-delay="6.7" data-duration="1.8" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/></svg>
-      <div class="nav-content" style="animation-delay:8.35s"><div><strong>Рабочие чертежи</strong><span>Примеры РКД и узлов</span></div></div>
+      <div class="reveal-frame" data-delay="6.4" data-duration="1.6">
+        <span class="mask-side mask-top"></span>
+        <span class="mask-side mask-right"></span>
+        <span class="mask-side mask-bottom"></span>
+        <span class="mask-side mask-left"></span>
+      </div>
+      <div class="nav-content" style="animation-delay:7.85s">
+        <div><strong>Рабочие чертежи</strong><span>Примеры РКД и узлов</span></div>
+      </div>
     </a>
 
     <a class="nav-btn" href="#">
-      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="frame-path" data-delay="7.2" data-duration="1.8" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/></svg>
-      <div class="nav-content" style="animation-delay:8.85s"><div><strong>3D-модели</strong><span>Интерактивные проекты</span></div></div>
+      <div class="reveal-frame" data-delay="6.9" data-duration="1.6">
+        <span class="mask-side mask-top"></span>
+        <span class="mask-side mask-right"></span>
+        <span class="mask-side mask-bottom"></span>
+        <span class="mask-side mask-left"></span>
+      </div>
+      <div class="nav-content" style="animation-delay:8.35s">
+        <div><strong>3D-модели</strong><span>Интерактивные проекты</span></div>
+      </div>
     </a>
 
     <a class="nav-btn" href="#">
-      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="frame-path" data-delay="7.7" data-duration="1.8" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/></svg>
-      <div class="nav-content" style="animation-delay:9.35s"><div><strong>Фото</strong><span>Реализованные изделия</span></div></div>
+      <div class="reveal-frame" data-delay="7.4" data-duration="1.6">
+        <span class="mask-side mask-top"></span>
+        <span class="mask-side mask-right"></span>
+        <span class="mask-side mask-bottom"></span>
+        <span class="mask-side mask-left"></span>
+      </div>
+      <div class="nav-content" style="animation-delay:8.85s">
+        <div><strong>Фото</strong><span>Реализованные изделия</span></div>
+      </div>
     </a>
 
     <section class="frame-box">
-      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="frame-path" data-delay="8.25" data-duration="1.4" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/></svg>
-      <div class="box-content format-content" style="animation-delay:9.5s">формат A3</div>
+      <div class="reveal-frame" data-delay="7.9" data-duration="1.3">
+        <span class="mask-side mask-top"></span>
+        <span class="mask-side mask-right"></span>
+        <span class="mask-side mask-bottom"></span>
+        <span class="mask-side mask-left"></span>
+      </div>
+      <div class="box-content format-content" style="animation-delay:9.05s">
+        формат A3
+      </div>
     </section>
 
     <section class="frame-box">
-      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="frame-path" data-delay="8.65" data-duration="2.0" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/></svg>
-      <div class="box-content info-content" style="animation-delay:10.45s"><div>Основная информация</div><div style="margin-top:11px;">Лист</div><div class="sheet-no">01</div></div>
+      <div class="reveal-frame" data-delay="8.25" data-duration="1.9">
+        <span class="mask-side mask-top"></span>
+        <span class="mask-side mask-right"></span>
+        <span class="mask-side mask-bottom"></span>
+        <span class="mask-side mask-left"></span>
+      </div>
+      <div class="box-content info-content" style="animation-delay:9.95s">
+        <div>Основная информация</div>
+        <div style="margin-top:11px;">Лист</div>
+        <div class="sheet-no">01</div>
+      </div>
     </section>
 
   </aside>
@@ -476,29 +580,54 @@ body{
 
 <script>
 (function(){
-  const paths = document.querySelectorAll('.frame-path');
+  function setupFrame(frame){
+    const rect = frame.getBoundingClientRect();
+    const w = Math.max(1, rect.width);
+    const h = Math.max(1, rect.height);
+    const perimeter = 2 * (w + h);
 
-  paths.forEach(path => {
-    const len = path.getTotalLength();
-    path.style.setProperty('--path-len', len);
-    path.style.strokeDasharray = String(len);
-    path.style.strokeDashoffset = String(len);
-    path.style.animationDelay = (path.dataset.delay || 0) + 's';
-    path.style.animationDuration = (path.dataset.duration || 2) + 's';
-  });
+    const delay = parseFloat(frame.dataset.delay || "0");
+    const total = parseFloat(frame.dataset.duration || "2");
 
-  requestAnimationFrame(() => {
+    const topTime = total * (w / perimeter);
+    const rightTime = total * (h / perimeter);
+    const bottomTime = total * (w / perimeter);
+    const leftTime = total * (h / perimeter);
+
+    const top = frame.querySelector(".mask-top");
+    const right = frame.querySelector(".mask-right");
+    const bottom = frame.querySelector(".mask-bottom");
+    const left = frame.querySelector(".mask-left");
+
+    top.style.animationDuration = topTime + "s";
+    top.style.animationDelay = delay + "s";
+
+    right.style.animationDuration = rightTime + "s";
+    right.style.animationDelay = (delay + topTime) + "s";
+
+    bottom.style.animationDuration = bottomTime + "s";
+    bottom.style.animationDelay = (delay + topTime + rightTime) + "s";
+
+    left.style.animationDuration = leftTime + "s";
+    left.style.animationDelay = (delay + topTime + rightTime + bottomTime) + "s";
+
     requestAnimationFrame(() => {
-      paths.forEach(path => path.classList.add('ready'));
+      top.classList.add("go");
+      right.classList.add("go");
+      bottom.classList.add("go");
+      left.classList.add("go");
+    });
+  }
 
-      document.querySelectorAll('.project-separator').forEach(line => {
-        line.style.animationDelay = (line.dataset.delay || 0) + 's';
-        line.classList.add('ready');
-      });
+  window.addEventListener("load", () => {
+    document.querySelectorAll(".reveal-frame").forEach(setupFrame);
+
+    document.querySelectorAll(".project-separator").forEach(line => {
+      line.style.animationDelay = (line.dataset.delay || 0) + "s";
+      line.classList.add("go");
     });
   });
 })();
 </script>
-
 </body>
 </html>
