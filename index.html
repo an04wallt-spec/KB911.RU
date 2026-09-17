@@ -4,526 +4,501 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>КБ911 — разработка мебели</title>
+
 <style>
-  @font-face{
-    font-family:"Bahnschrift Local";
-    src:local("Bahnschrift");
-    font-style:normal;
-    font-weight:100 900;
-  }
+@font-face{
+  font-family:"Bahnschrift Local";
+  src:local("Bahnschrift");
+  font-style:normal;
+  font-weight:100 900;
+}
 
-  :root{
-    --ink:#111;
-    --paper:#fff;
-    --bg:#f2f2f0;
-  }
+:root{
+  --ink:#111;
+  --paper:#fff;
+  --bg:#f2f2f0;
+}
 
-  *{box-sizing:border-box}
+*{box-sizing:border-box}
 
-  html,body{
-    margin:0;
-    min-height:100%;
-    background:var(--bg);
-    color:var(--ink);
-    font-family:"Bahnschrift Local","Bahnschrift","Arial Narrow",Arial,sans-serif;
-  }
+html,body{
+  margin:0;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Bahnschrift Local","Bahnschrift","Arial Narrow",Arial,sans-serif;
+}
 
+body{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px;
+}
+
+.sheet{
+  position:relative;
+  width:min(1500px,100%);
+  aspect-ratio:420/297;
+  min-height:690px;
+  background:var(--paper);
+  overflow:hidden;
+}
+
+.left-field{
+  position:absolute;
+  left:20px;
+  top:12px;
+  bottom:12px;
+  right:138px;
+  background:#fff;
+}
+
+.right-column{
+  position:absolute;
+  top:12px;
+  right:8px;
+  bottom:12px;
+  width:118px;
+  display:grid;
+  grid-template-rows:22px 128px minmax(170px,1fr) 48px 48px 48px 18px 98px;
+  gap:7px;
+}
+
+.frame-box,
+.nav-btn{
+  position:relative;
+  background:#fff;
+  min-width:0;
+  min-height:0;
+}
+
+.frame-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  overflow:visible;
+}
+
+.frame-path{
+  fill:none;
+  stroke:var(--ink);
+  stroke-width:1;
+  vector-effect:non-scaling-stroke;
+  stroke-linecap:square;
+  stroke-linejoin:miter;
+  opacity:1;
+}
+
+.frame-path.ready{
+  animation-name:drawFrame;
+  animation-timing-function:linear;
+  animation-fill-mode:forwards;
+}
+
+@keyframes drawFrame{
+  from{stroke-dashoffset:var(--path-len)}
+  to{stroke-dashoffset:0}
+}
+
+.project-separator{
+  position:absolute;
+  left:0;
+  width:100%;
+  height:1px;
+  background:var(--ink);
+  transform:scaleX(0);
+  transform-origin:left center;
+}
+
+.project-separator.ready{
+  animation:drawInner 1.2s linear forwards;
+}
+
+.project-separator.one{top:33.333%}
+.project-separator.two{top:66.666%}
+
+@keyframes drawInner{
+  to{transform:scaleX(1)}
+}
+
+.box-content{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  animation:contentIn .45s ease forwards;
+}
+
+.site-content{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 6px;
+  white-space:nowrap;
+  font-size:11px;
+  font-style:italic;
+}
+
+.site-content .year{
+  flex:0 0 auto;
+  margin-left:8px;
+  font-size:6px;
+  font-style:normal;
+}
+
+.project-content{
+  font-size:11px;
+  font-style:italic;
+}
+
+.project-row{
+  height:33.333%;
+  padding:8px 6px;
+}
+
+.materials-content{
+  padding:9px 6px;
+  font-size:11px;
+  font-style:italic;
+}
+
+.format-content{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:7px;
+  font-style:italic;
+}
+
+.info-content{
+  padding:8px 6px;
+  font-size:7px;
+  line-height:1.25;
+  font-style:italic;
+}
+
+.sheet-no{
+  position:absolute;
+  right:17px;
+  bottom:12px;
+  font-size:30px;
+  font-style:italic;
+  font-weight:700;
+}
+
+.nav-btn{
+  color:var(--ink);
+  text-decoration:none;
+}
+
+.nav-content{
+  position:relative;
+  z-index:2;
+  height:100%;
+  padding:7px 9px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  opacity:0;
+  animation:contentIn .45s ease forwards;
+}
+
+.nav-content::after{
+  content:"→";
+  font-size:15px;
+}
+
+.nav-content strong{
+  display:block;
+  font-size:9px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  line-height:1.15;
+}
+
+.nav-content span{
+  display:block;
+  margin-top:2px;
+  font-size:6.5px;
+  opacity:.62;
+}
+
+.nav-btn:hover .nav-content{
+  background:#111;
+  color:#fff;
+}
+
+.main-content{
+  position:absolute;
+  left:58px;
+  top:58px;
+  right:190px;
+  bottom:58px;
+  display:flex;
+  align-items:center;
+  z-index:2;
+}
+
+.intro{
+  max-width:760px;
+  opacity:0;
+  transform:translateY(8px);
+  animation:fadeUp .9s ease 4.7s forwards;
+}
+
+.eyebrow{
+  margin-bottom:18px;
+  font-size:11px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+
+.lead{
+  margin:0;
+  max-width:700px;
+  font-size:25px;
+  line-height:1.38;
+  font-weight:400;
+}
+
+.note{
+  margin-top:22px;
+  max-width:610px;
+  font-size:13px;
+  line-height:1.55;
+  color:#555;
+}
+
+@keyframes contentIn{
+  to{opacity:1}
+}
+
+@keyframes fadeUp{
+  to{opacity:1;transform:translateY(0)}
+}
+
+@media (max-width:760px){
   body{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:100vh;
-    padding:12px;
+    padding:0;
+    background:#fff;
+    align-items:stretch;
   }
 
   .sheet{
-    position:relative;
-    width:min(1500px,100%);
-    aspect-ratio:420/297;
-    min-height:690px;
-    background:var(--paper);
-    overflow:hidden;
-  }
-
-  .left-field,
-  .right-box{
-    position:absolute;
-    background:#fff;
+    width:100%;
+    min-height:100dvh;
+    aspect-ratio:auto;
   }
 
   .left-field{
-    left:20px;
-    top:12px;
-    bottom:12px;
-    right:138px;
+    left:10px;
+    top:10px;
+    bottom:10px;
+    right:46%;
   }
 
   .right-column{
-    position:absolute;
-    top:12px;
-    right:8px;
-    bottom:12px;
-    width:118px;
-  }
-
-  .right-box{
-    left:0;
-    width:100%;
-  }
-
-  .site-box{top:0;height:22px}
-  .project-box{top:30px;height:128px}
-  .materials-box{top:168px;bottom:128px}
-  .format-box{bottom:106px;height:18px}
-  .info-box{bottom:0;height:98px}
-
-  .draw-svg{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    pointer-events:none;
-    overflow:visible;
-  }
-
-  .draw-rect{
-    fill:none;
-    stroke:var(--ink);
-    stroke-width:1;
-    vector-effect:non-scaling-stroke;
-    stroke-dasharray:400;
-    stroke-dashoffset:400;
-    animation:drawBox 4.8s linear forwards;
-  }
-
-  .left-field .draw-rect{animation-delay:.35s}
-  .site-box .draw-rect{animation-delay:.35s;animation-duration:2.2s}
-  .project-box .draw-rect{animation-delay:1.7s;animation-duration:2.4s}
-  .materials-box .draw-rect{animation-delay:3.1s;animation-duration:2.8s}
-  .format-box .draw-rect{animation-delay:5.2s;animation-duration:1.5s}
-  .info-box .draw-rect{animation-delay:5.8s;animation-duration:2s}
-
-  .project-separator{
-    position:absolute;
-    left:0;
-    right:0;
-    height:1px;
-    background:var(--ink);
-    transform:scaleX(0);
-    transform-origin:left center;
-    animation:drawLine 1.2s linear forwards;
-  }
-
-  .project-separator.one{top:33.333%;animation-delay:2.7s}
-  .project-separator.two{top:66.666%;animation-delay:3.25s}
-
-  .site-content,
-  .project-content,
-  .materials-content,
-  .format-content,
-  .info-content{
-    position:absolute;
-    inset:0;
-    opacity:0;
-    animation:contentIn .6s ease forwards;
+    top:10px;
+    right:10px;
+    bottom:10px;
+    width:42%;
+    min-width:156px;
+    grid-template-rows:20px 112px minmax(120px,1fr) 40px 40px 40px 18px 96px;
+    gap:5px;
   }
 
   .site-content{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 6px;
-    font-size:11px;
-    font-style:italic;
-    white-space:nowrap;
-    animation-delay:2.2s;
+    padding:0 5px;
+    font-size:9px;
   }
 
   .site-content .year{
-    font-size:6px;
-    font-style:normal;
-    margin-left:8px;
+    font-size:5.5px;
   }
 
   .project-content{
-    font-size:11px;
-    font-style:italic;
-    animation-delay:4.15s;
+    font-size:8.4px;
   }
 
   .project-row{
-    height:33.333%;
-    padding:8px 6px;
+    padding:7px 5px;
   }
 
   .materials-content{
-    padding:9px 6px;
-    font-size:11px;
-    font-style:italic;
-    animation-delay:5.7s;
+    padding:7px 5px;
+    font-size:8.5px;
   }
 
   .format-content{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:7px;
-    font-style:italic;
-    animation-delay:6.5s;
+    font-size:5.7px;
   }
 
   .info-content{
-    padding:8px 6px;
-    font-size:7px;
-    line-height:1.25;
-    font-style:italic;
-    animation-delay:7.4s;
+    padding:6px 5px;
+    font-size:5.6px;
   }
 
   .sheet-no{
-    position:absolute;
-    right:17px;
-    bottom:12px;
-    font-size:30px;
-    font-style:italic;
-    font-weight:700;
+    right:10px;
+    bottom:9px;
+    font-size:22px;
   }
-
-  .main-content{
-    position:absolute;
-    left:58px;
-    top:58px;
-    right:190px;
-    bottom:58px;
-    display:flex;
-    align-items:center;
-    z-index:2;
-  }
-
-  .intro{
-    max-width:760px;
-    opacity:0;
-    transform:translateY(8px);
-    animation:fadeUp .9s ease 4.3s forwards;
-  }
-
-  .eyebrow{
-    margin-bottom:18px;
-    font-size:11px;
-    letter-spacing:.2em;
-    text-transform:uppercase;
-  }
-
-  .lead{
-    margin:0;
-    font-size:25px;
-    line-height:1.38;
-    font-weight:400;
-    max-width:700px;
-  }
-
-  .note{
-    margin-top:22px;
-    max-width:610px;
-    font-size:13px;
-    line-height:1.55;
-    color:#555;
-  }
-
-  .nav-stack{
-    position:absolute;
-    left:0;
-    right:0;
-    bottom:133px;
-    display:flex;
-    flex-direction:column;
-    gap:7px;
-  }
-
-  .nav-btn{
-    position:relative;
-    min-height:48px;
-    color:var(--ink);
-    text-decoration:none;
-    background:#fff;
-  }
-
-  .nav-btn .draw-rect{
-    animation-duration:1.4s;
-  }
-
-  .nav-btn:nth-child(1) .draw-rect{animation-delay:6.3s}
-  .nav-btn:nth-child(2) .draw-rect{animation-delay:6.8s}
-  .nav-btn:nth-child(3) .draw-rect{animation-delay:7.3s}
 
   .nav-content{
-    position:relative;
-    z-index:2;
-    min-height:48px;
-    padding:7px 9px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-    opacity:0;
-    animation:contentIn .45s ease forwards;
-  }
-
-  .nav-btn:nth-child(1) .nav-content{animation-delay:7.35s}
-  .nav-btn:nth-child(2) .nav-content{animation-delay:7.85s}
-  .nav-btn:nth-child(3) .nav-content{animation-delay:8.35s}
-
-  .nav-content::after{
-    content:"→";
-    font-size:15px;
+    padding:5px 6px;
   }
 
   .nav-content strong{
-    display:block;
-    font-size:9px;
-    letter-spacing:.05em;
-    text-transform:uppercase;
-    line-height:1.15;
+    font-size:7.5px;
+    letter-spacing:.04em;
   }
 
   .nav-content span{
-    display:block;
-    margin-top:2px;
-    font-size:6.5px;
-    opacity:.62;
+    font-size:5.7px;
   }
 
-  .nav-btn:hover .nav-content{
-    background:#111;
-    color:#fff;
+  .nav-content::after{
+    font-size:12px;
   }
 
-  @keyframes drawBox{
-    from{stroke-dashoffset:400}
-    to{stroke-dashoffset:0}
+  .main-content{
+    left:20px;
+    top:30px;
+    right:calc(46% + 18px);
+    bottom:28px;
+    align-items:flex-start;
   }
 
-  @keyframes drawLine{
-    to{transform:scaleX(1)}
+  .eyebrow{
+    margin-bottom:10px;
+    font-size:7px;
+    letter-spacing:.15em;
   }
 
-  @keyframes contentIn{
-    to{opacity:1}
+  .lead{
+    font-size:15px;
+    line-height:1.32;
   }
 
-  @keyframes fadeUp{
-    to{opacity:1;transform:translateY(0)}
+  .note{
+    margin-top:12px;
+    font-size:8.8px;
+    line-height:1.4;
   }
+}
 
-  @media (max-width:760px){
-    body{
-      padding:0;
-      background:#fff;
-      align-items:stretch;
-    }
-
-    .sheet{
-      width:100%;
-      min-height:100dvh;
-      aspect-ratio:auto;
-    }
-
-    .left-field{
-      left:10px;
-      top:10px;
-      bottom:10px;
-      right:46%;
-    }
-
-    .right-column{
-      top:10px;
-      right:10px;
-      bottom:10px;
-      width:42%;
-      min-width:156px;
-    }
-
-    .site-box{height:20px}
-    .project-box{top:27px;height:112px}
-    .materials-box{top:146px;bottom:126px}
-    .format-box{bottom:103px;height:18px}
-    .info-box{height:96px}
-
-    .site-content{
-      padding:0 5px;
-      font-size:9px;
-    }
-
-    .site-content .year{font-size:5.5px}
-
-    .project-content{font-size:8.4px}
-    .project-row{padding:7px 5px}
-
-    .materials-content{
-      padding:7px 5px;
-      font-size:8.5px;
-    }
-
-    .format-content{font-size:5.7px}
-
-    .info-content{
-      padding:6px 5px;
-      font-size:5.6px;
-    }
-
-    .sheet-no{
-      right:10px;
-      bottom:9px;
-      font-size:22px;
-    }
-
-    .nav-stack{
-      bottom:130px;
-      gap:5px;
-    }
-
-    .nav-btn{min-height:40px}
-    .nav-content{
-      min-height:40px;
-      padding:5px 6px;
-    }
-
-    .nav-content strong{
-      font-size:7.5px;
-      letter-spacing:.04em;
-    }
-
-    .nav-content span{font-size:5.7px}
-    .nav-content::after{font-size:12px}
-
-    .main-content{
-      left:20px;
-      top:30px;
-      right:calc(46% + 18px);
-      bottom:28px;
-      align-items:flex-start;
-    }
-
-    .eyebrow{
-      margin-bottom:10px;
-      font-size:7px;
-      letter-spacing:.15em;
-    }
-
-    .lead{
-      font-size:15px;
-      line-height:1.32;
-    }
-
-    .note{
-      margin-top:12px;
-      font-size:8.8px;
-      line-height:1.4;
-    }
+@media (prefers-reduced-motion:reduce){
+  .frame-path.ready,
+  .project-separator.ready,
+  .box-content,
+  .nav-content,
+  .intro{
+    animation-duration:.01ms !important;
+    animation-delay:0s !important;
   }
-
-  @media (prefers-reduced-motion:reduce){
-    .draw-rect{animation-duration:.01ms;animation-delay:0s}
-    .project-separator{animation-duration:.01ms;animation-delay:0s}
-    .site-content,.project-content,.materials-content,.format-content,.info-content,.nav-content,.intro{
-      animation-duration:.01ms;
-      animation-delay:0s;
-    }
-  }
+}
 </style>
 </head>
 
 <body>
-  <main class="sheet">
+<main class="sheet">
 
-    <section class="left-field" aria-label="Основное поле чертежа">
-      <svg class="draw-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path class="draw-rect" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
+  <section class="left-field" aria-label="Основное поле чертежа">
+    <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path class="frame-path" data-delay="0.4" data-duration="5.8" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
+    </svg>
+  </section>
+
+  <section class="main-content">
+    <div class="intro">
+      <div class="eyebrow">Конструкторское бюро / мебель</div>
+      <p class="lead">Разработка нестандартной мебели: конструктивные решения, рабочая документация и подготовленные к производству 3D-модели.</p>
+      <p class="note">Здесь позже разместим краткую информацию: имя, опыт, специализацию и несколько предложений о подходе к работе.</p>
+    </div>
+  </section>
+
+  <aside class="right-column" aria-label="Информационные поля">
+
+    <section class="frame-box">
+      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path class="frame-path" data-delay="0.4" data-duration="2.4" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
       </svg>
+      <div class="box-content site-content" style="animation-delay:2.45s"><span>www.kb911.ru</span><span class="year">2026</span></div>
     </section>
 
-    <section class="main-content">
-      <div class="intro">
-        <div class="eyebrow">Конструкторское бюро / мебель</div>
-        <p class="lead">Разработка нестандартной мебели: конструктивные решения, рабочая документация и подготовленные к производству 3D-модели.</p>
-        <p class="note">Здесь позже разместим краткую информацию: имя, опыт, специализацию и несколько предложений о подходе к работе.</p>
-      </div>
+    <section class="frame-box">
+      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path class="frame-path" data-delay="2.0" data-duration="2.8" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
+      </svg>
+      <div class="project-separator one" data-delay="3.3"></div>
+      <div class="project-separator two" data-delay="3.8"></div>
+      <div class="box-content project-content" style="animation-delay:4.7s"><div class="project-row">Проект:</div><div class="project-row">Изделие:</div><div class="project-row">конструктор:</div></div>
     </section>
 
-    <aside class="right-column" aria-label="Информационные поля">
+    <section class="frame-box">
+      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path class="frame-path" data-delay="4.1" data-duration="3.2" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
+      </svg>
+      <div class="box-content materials-content" style="animation-delay:7.1s">Материалы:</div>
+    </section>
 
-      <section class="right-box site-box">
-        <svg class="draw-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path class="draw-rect" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-        </svg>
-        <div class="site-content">
-          <span>www.kb911.ru</span>
-          <span class="year">2026</span>
-        </div>
-      </section>
+    <a class="nav-btn" href="#">
+      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="frame-path" data-delay="6.7" data-duration="1.8" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/></svg>
+      <div class="nav-content" style="animation-delay:8.35s"><div><strong>Рабочие чертежи</strong><span>Примеры РКД и узлов</span></div></div>
+    </a>
 
-      <section class="right-box project-box">
-        <svg class="draw-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path class="draw-rect" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-        </svg>
-        <div class="project-separator one"></div>
-        <div class="project-separator two"></div>
-        <div class="project-content">
-          <div class="project-row">Проект:</div>
-          <div class="project-row">Изделие:</div>
-          <div class="project-row">конструктор:</div>
-        </div>
-      </section>
+    <a class="nav-btn" href="#">
+      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="frame-path" data-delay="7.2" data-duration="1.8" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/></svg>
+      <div class="nav-content" style="animation-delay:8.85s"><div><strong>3D-модели</strong><span>Интерактивные проекты</span></div></div>
+    </a>
 
-      <section class="right-box materials-box">
-        <svg class="draw-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path class="draw-rect" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-        </svg>
-        <div class="materials-content">Материалы:</div>
-      </section>
+    <a class="nav-btn" href="#">
+      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="frame-path" data-delay="7.7" data-duration="1.8" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/></svg>
+      <div class="nav-content" style="animation-delay:9.35s"><div><strong>Фото</strong><span>Реализованные изделия</span></div></div>
+    </a>
 
-      <nav class="nav-stack" aria-label="Навигация">
-        <a class="nav-btn" href="#">
-          <svg class="draw-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <path class="draw-rect" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-          </svg>
-          <div class="nav-content"><div><strong>Рабочие чертежи</strong><span>Примеры РКД и узлов</span></div></div>
-        </a>
+    <section class="frame-box">
+      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="frame-path" data-delay="8.25" data-duration="1.4" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/></svg>
+      <div class="box-content format-content" style="animation-delay:9.5s">формат A3</div>
+    </section>
 
-        <a class="nav-btn" href="#">
-          <svg class="draw-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <path class="draw-rect" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-          </svg>
-          <div class="nav-content"><div><strong>3D-модели</strong><span>Интерактивные проекты</span></div></div>
-        </a>
+    <section class="frame-box">
+      <svg class="frame-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="frame-path" data-delay="8.65" data-duration="2.0" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/></svg>
+      <div class="box-content info-content" style="animation-delay:10.45s"><div>Основная информация</div><div style="margin-top:11px;">Лист</div><div class="sheet-no">01</div></div>
+    </section>
 
-        <a class="nav-btn" href="#">
-          <svg class="draw-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <path class="draw-rect" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-          </svg>
-          <div class="nav-content"><div><strong>Фото</strong><span>Реализованные изделия</span></div></div>
-        </a>
-      </nav>
+  </aside>
+</main>
 
-      <section class="right-box format-box">
-        <svg class="draw-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path class="draw-rect" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-        </svg>
-        <div class="format-content">формат A3</div>
-      </section>
+<script>
+(function(){
+  const paths = document.querySelectorAll('.frame-path');
 
-      <section class="right-box info-box">
-        <svg class="draw-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path class="draw-rect" d="M 0.5 0.5 H 99.5 V 99.5 H 0.5 Z"/>
-        </svg>
-        <div class="info-content">
-          <div>Основная информация</div>
-          <div style="margin-top:11px;">Лист</div>
-          <div class="sheet-no">01</div>
-        </div>
-      </section>
+  paths.forEach(path => {
+    const len = path.getTotalLength();
+    path.style.setProperty('--path-len', len);
+    path.style.strokeDasharray = String(len);
+    path.style.strokeDashoffset = String(len);
+    path.style.animationDelay = (path.dataset.delay || 0) + 's';
+    path.style.animationDuration = (path.dataset.duration || 2) + 's';
+  });
 
-    </aside>
-  </main>
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      paths.forEach(path => path.classList.add('ready'));
+
+      document.querySelectorAll('.project-separator').forEach(line => {
+        line.style.animationDelay = (line.dataset.delay || 0) + 's';
+        line.classList.add('ready');
+      });
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
