@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>КБ911 — разработка мебели</title>
+<style>
+  :root{--ink:#111;--paper:#fff;--bg:#f2f2f0}
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+  body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:18px}
+
+  .sheet{position:relative;width:min(1500px,100%);aspect-ratio:420/297;min-height:690px;background:var(--paper);box-shadow:0 14px 44px rgba(0,0,0,.08);overflow:hidden}
+  .drawing-frame{position:absolute;inset:17px;border:1.3px solid var(--ink);opacity:0;animation:frameIn .75s ease .25s forwards}
+
+  /* Правая графа рамки — основная навигация */
+  .stamp{position:absolute;top:17px;right:17px;bottom:17px;width:164px;padding-left:7px;border-left:1.3px solid var(--ink);display:flex;flex-direction:column;gap:7px;opacity:0;animation:stampIn .65s ease .8s forwards;z-index:3}
+  .box{border:1px solid var(--ink);background:#fff}
+  .site-box{height:22px;display:flex;align-items:center;justify-content:space-between;padding:0 7px;font-size:7px;font-style:italic}
+  .site-box .year{font-style:normal;font-size:6px}
+  .project-box{min-height:92px;padding:8px 7px;font-size:7px;line-height:1.45}
+  .materials-box{min-height:112px;padding:8px 7px;font-size:7px;line-height:1.45}
+  .stamp-nav{flex:1;display:flex;flex-direction:column;gap:8px}
+  .nav-btn{min-height:54px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--ink);text-decoration:none;transition:background .18s ease,color .18s ease,transform .18s ease}
+  .nav-btn:hover{background:#111;color:#fff;transform:translateX(-4px)}
+  .nav-btn::after{content:"→";font-size:18px;font-weight:300}
+  .nav-btn strong{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;line-height:1.25}
+  .nav-btn span{display:block;margin-top:3px;font-size:8px;opacity:.65;letter-spacing:.04em}
+  .format-box{height:22px;display:flex;align-items:center;justify-content:center;font-size:7px}
+  .info-box{min-height:72px;padding:7px;position:relative;font-size:6.7px;line-height:1.35}
+  .sheet-no{position:absolute;right:9px;bottom:6px;font-size:28px;font-style:italic;font-weight:700}
+
+  .content{position:absolute;left:56px;top:58px;right:214px;bottom:54px;display:flex;align-items:center;z-index:2}
+  .intro{max-width:760px;opacity:0;transform:translateY(8px);animation:fadeUp .7s ease 1s forwards}
+  .eyebrow{margin-bottom:18px;font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+  .lead{margin:0;font-size:25px;line-height:1.38;font-weight:400;max-width:700px}
+  .note{margin-top:22px;max-width:610px;font-size:13px;line-height:1.55;color:#555}
+
+  @keyframes frameIn{from{opacity:0}to{opacity:1}}
+  @keyframes stampIn{from{opacity:0;transform:translateX(6px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+  /* Мобильный формат: правая графа остаётся основной видимой частью */
+  @media (max-width:760px){
+    body{padding:0;background:#fff;align-items:stretch}
+    .sheet{width:100%;min-height:100dvh;aspect-ratio:auto;box-shadow:none}
+    .drawing-frame{inset:10px}
+    .stamp{top:10px;right:10px;bottom:10px;width:44%;min-width:160px;padding-left:5px;gap:5px}
+    .site-box{height:20px;padding:0 5px;font-size:6px}
+    .site-box .year{font-size:5px}
+    .project-box{min-height:80px;padding:6px 5px;font-size:5.8px;line-height:1.35}
+    .materials-box{min-height:88px;padding:6px 5px;font-size:5.8px;line-height:1.35}
+    .stamp-nav{gap:5px}
+    .nav-btn{min-height:40px;padding:6px 7px}
+    .nav-btn::after{font-size:14px}
+    .nav-btn strong{font-size:8.8px;letter-spacing:.06em;line-height:1.15}
+    .nav-btn span{margin-top:2px;font-size:6.2px}
+    .format-box{height:18px;font-size:5.8px}
+    .info-box{min-height:54px;padding:5px;font-size:5.4px}
+    .sheet-no{right:6px;bottom:4px;font-size:18px}
+    .content{left:24px;top:32px;right:calc(44% + 28px);bottom:28px;align-items:flex-start}
+    .eyebrow{margin-bottom:10px;font-size:7px;letter-spacing:.15em}
+    .lead{font-size:15px;line-height:1.32;max-width:none}
+    .note{margin-top:12px;font-size:8.8px;line-height:1.4;max-width:none}
+  }
+</style>
+</head>
+<body>
+  <main class="sheet">
+    <div class="drawing-frame" aria-hidden="true"></div>
+
+    <section class="content">
+      <div class="intro">
+        <div class="eyebrow">Конструкторское бюро / мебель</div>
+        <p class="lead">Разработка нестандартной мебели: конструктивные решения, рабочая документация и подготовленные к производству 3D-модели.</p>
+        <p class="note">Здесь позже разместим краткую информацию: имя, опыт, специализацию и несколько предложений о подходе к работе.</p>
+      </div>
+    </section>
+
+    <aside class="stamp" aria-label="Правая графа чертежной рамки">
+      <div class="box site-box"><span>www.kb911.ru</span><span class="year">2026</span></div>
+
+      <div class="box project-box">
+        <b>Проект:</b><br>
+        Сайт КБ911<br><br>
+        <b>Изделие:</b><br>
+        Мебель / РКД / 3D<br><br>
+        <b>Конструктор:</b><br>
+        Андрей
+      </div>
+
+      <div class="box materials-box">
+        <b>Материалы:</b><br>
+        Информация<br>
+        по образцу<br><br>
+        -<br><br>
+        Навигация по разделам сайта
+      </div>
+
+      <nav class="stamp-nav" aria-label="Навигация">
+        <a class="box nav-btn" href="#"><div><strong>Рабочие чертежи</strong><span>Примеры РКД и узлов</span></div></a>
+        <a class="box nav-btn" href="#"><div><strong>3D-модели</strong><span>Интерактивные проекты</span></div></a>
+        <a class="box nav-btn" href="#"><div><strong>Фото</strong><span>Реализованные изделия</span></div></a>
+      </nav>
+
+      <div class="box format-box">формат A3</div>
+      <div class="box info-box"><b>Основная информация</b><br>Лист<div class="sheet-no">01</div></div>
+    </aside>
+  </main>
+</body>
+</html>
