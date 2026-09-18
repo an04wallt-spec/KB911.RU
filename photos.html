@@ -27,7 +27,7 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;pad
   justify-content:center;
   overflow:hidden
 }
-.gallery-image{display:block;flex:0 0 auto;background-image:url("photos/gallery.webp");background-repeat:no-repeat;background-size:500% 200%;background-position:0 0;opacity:0;transition:opacity .25s ease}
+.gallery-image{display:block;flex:0 0 auto;background-repeat:no-repeat;background-position:0 0;opacity:0;transition:opacity .25s ease}
 .gallery-image.show{opacity:1}
 .empty-state{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(16px,1.05vw,24px);font-style:italic;color:#777}
 .gallery-nav{position:absolute;inset:0;pointer-events:none}
@@ -165,9 +165,14 @@ a.corner-content:hover{background:#111;color:#fff}
 
 <script>
 (function(){
-  const photoCount = 10;
-  const columns = 5;
-  const aspect = 600 / 800;
+  const spriteWidth = 7018;
+  const spriteHeight = 450;
+  const photos = [
+    {x:0,w:338},{x:338,w:338},{x:676,w:338},{x:1014,w:338},{x:1352,w:338},
+    {x:1690,w:338},{x:2028,w:338},{x:2366,w:338},{x:2704,w:338},{x:3042,w:338},
+    {x:3380,w:338},{x:3718,w:337},{x:4055,w:338},{x:4393,w:337},{x:4730,w:337},
+    {x:5067,w:337},{x:5404,w:600},{x:6004,w:338},{x:6342,w:338},{x:6680,w:338}
+  ];
 
   const stage = document.querySelector(".gallery-stage");
   const image = document.getElementById("galleryImage");
@@ -182,12 +187,21 @@ a.corner-content:hover{background:#111;color:#fff}
   let spriteReady = false;
 
   function fitImage(){
+    const item = photos[index];
+    const aspect = item.w / spriteHeight;
     const sw = stage.clientWidth;
     const sh = stage.clientHeight;
-    let w = Math.min(sw, sh * aspect);
-    let h = w / aspect;
+    const w = Math.min(sw, sh * aspect);
+    const h = w / aspect;
+    const scale = h / spriteHeight;
+
     image.style.width = Math.round(w) + "px";
     image.style.height = Math.round(h) + "px";
+    image.style.backgroundSize =
+      Math.round(spriteWidth * scale) + "px " +
+      Math.round(spriteHeight * scale) + "px";
+    image.style.backgroundPosition =
+      Math.round(-item.x * scale) + "px 0";
   }
 
   function render(){
@@ -195,24 +209,20 @@ a.corner-content:hover{background:#111;color:#fff}
     empty.style.display = "none";
     title.textContent = "";
 
-    const col = index % columns;
-    const row = Math.floor(index / columns);
-    image.style.backgroundPosition = (col * 25) + "% " + (row * 100) + "%";
-
     counter.textContent =
       String(index + 1).padStart(2,"0") + " / " +
-      String(photoCount).padStart(2,"0");
+      String(photos.length).padStart(2,"0");
 
-    prev.disabled = photoCount < 2;
-    next.disabled = photoCount < 2;
+    prev.disabled = photos.length < 2;
+    next.disabled = photos.length < 2;
 
     if(spriteReady) image.classList.add("show");
   }
 
   function move(step){
-    if(photoCount < 2)return;
+    if(photos.length < 2)return;
     image.classList.remove("show");
-    index=(index+step+photoCount)%photoCount;
+    index=(index+step+photos.length)%photos.length;
     requestAnimationFrame(function(){
       render();
       requestAnimationFrame(function(){image.classList.add("show")});
@@ -240,13 +250,15 @@ a.corner-content:hover{background:#111;color:#fff}
 
   window.addEventListener("resize",fitImage);
 
+  const spriteUrl = "photos/gallery.webp?v=20";
   const preload = new Image();
   preload.onload = function(){
+    image.style.backgroundImage = 'url("' + spriteUrl + '")';
     spriteReady = true;
     render();
     requestAnimationFrame(function(){image.classList.add("show")});
   };
-  preload.src = "photos/gallery.webp";
+  preload.src = spriteUrl;
 })();
 </script>
 </body>
