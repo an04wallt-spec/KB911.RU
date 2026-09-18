@@ -165,11 +165,6 @@ a.corner-content:hover{background:#111;color:#fff}
 
 <script>
 (function(){
-  const photos = Array.from(
-    {length:20},
-    (_,i) => "photos/" + String(i + 1).padStart(2,"0") + ".jpg?v=1"
-  );
-
   const stage = document.querySelector(".gallery-stage");
   const image = document.getElementById("galleryImage");
   const empty = document.getElementById("emptyState");
@@ -178,13 +173,56 @@ a.corner-content:hover{background:#111;color:#fff}
   const prev = document.getElementById("prevBtn");
   const next = document.getElementById("nextBtn");
 
+  const photos = [];
   let index = 0;
   let touchStartX = null;
 
+  function photoUrl(number){
+    return "photos/" + String(number).padStart(2,"0") + ".jpg";
+  }
+
+  async function exists(url){
+    try{
+      const response = await fetch(url,{method:"HEAD",cache:"no-store"});
+      return response.ok;
+    }catch(e){
+      return false;
+    }
+  }
+
+  async function discoverPhotos(){
+    photos.length = 0;
+    let number = 1;
+
+    while(number <= 999){
+      const url = photoUrl(number);
+      if(!(await exists(url))) break;
+      photos.push(url);
+      number++;
+    }
+
+    if(!photos.length){
+      image.removeAttribute("src");
+      image.classList.remove("show");
+      empty.textContent = "Здесь будут реализованные проекты";
+      empty.style.display = "flex";
+      counter.textContent = "00 / 00";
+      prev.disabled = true;
+      next.disabled = true;
+      return;
+    }
+
+    if(index >= photos.length) index = 0;
+    render();
+  }
+
   function render(){
+    if(!photos.length) return;
+
     image.classList.remove("show");
     empty.style.display = "none";
     title.textContent = "";
+
     counter.textContent =
       String(index + 1).padStart(2,"0") + " / " +
       String(photos.length).padStart(2,"0");
@@ -232,7 +270,10 @@ a.corner-content:hover{background:#111;color:#fff}
     touchStartX = null;
   },{passive:true});
 
-  render();
+  counter.textContent = "…";
+  prev.disabled = true;
+  next.disabled = true;
+  discoverPhotos();
 })();
 </script>
 </body>
