@@ -7,7 +7,7 @@
 <link href="https://fonts.cdnfonts.com/css/d-din" rel="stylesheet">
 <style>
 @font-face{font-family:"Bahnschrift Local";src:local("Bahnschrift");font-style:normal;font-weight:100 900}
-:root{--ink:#111;--paper:#fff;--bg:#f2f2f0;--corner-w:max(118px,7.9vw);--corner-h:max(24px,3.1vh)}
+:root{--ink:#111;--paper:#fff;--bg:#f2f2f0;--corner-w:clamp(104px,6.6vw,138px);--corner-h:max(24px,3.1vh)}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"D-DIN","Bahnschrift Local","Bahnschrift","Arial Narrow",Arial,sans-serif}
 body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
@@ -106,7 +106,7 @@ a.corner-content:hover{background:#111;color:#fff}
 .corner-mask.br{right:-1px;bottom:-1px}
 
 @media(max-width:760px){
-  :root{--corner-w:118px;--corner-h:22px}
+  :root{--corner-w:104px;--corner-h:22px}
   body{padding:0;background:#fff;align-items:stretch;height:100dvh;min-height:0;overflow:hidden}
   .sheet{width:100%;height:100dvh;min-height:0}
   .gallery-shell{left:12px;top:12px;right:8px;bottom:12px}
@@ -151,7 +151,7 @@ a.corner-content:hover{background:#111;color:#fff}
   </section>
 
   <section class="corner tr">
-    <a class="corner-content" href="index.html">www.kb911.ru · 2026</a>
+    <a class="corner-content" href="index.html">www.kb911.ru</a>
   </section>
 
   <section class="corner bl">
