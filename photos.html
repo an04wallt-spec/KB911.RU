@@ -27,7 +27,7 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;pad
   justify-content:center;
   overflow:hidden
 }
-.gallery-image{display:block;flex:0 0 auto;background-repeat:no-repeat;background-position:0 0;opacity:0;transition:opacity .25s ease}
+.gallery-image{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;object-position:center;opacity:0;transition:opacity .25s ease}
 .gallery-image.show{opacity:1}
 .empty-state{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(16px,1.05vw,24px);font-style:italic;color:#777}
 .gallery-nav{position:absolute;inset:0;pointer-events:none}
@@ -131,7 +131,7 @@ a.corner-content:hover{background:#111;color:#fff}
     <div class="corner-mask br"></div>
 
     <div class="gallery-stage">
-      <div class="gallery-image" id="galleryImage" role="img" aria-label="Реализованный проект"></div>
+      <img class="gallery-image" id="galleryImage" alt="Реализованный проект">
       <div class="empty-state" id="emptyState">Здесь будут реализованные проекты</div>
     </div>
 
@@ -165,14 +165,10 @@ a.corner-content:hover{background:#111;color:#fff}
 
 <script>
 (function(){
-  const spriteWidth = 4363;
-  const spriteHeight = 280;
-  const photos = [
-    {x:0,w:210},{x:210,w:210},{x:420,w:210},{x:630,w:210},{x:840,w:210},
-    {x:1050,w:210},{x:1260,w:210},{x:1470,w:210},{x:1680,w:210},{x:1890,w:210},
-    {x:2100,w:210},{x:2310,w:210},{x:2520,w:210},{x:2730,w:210},{x:2940,w:210},
-    {x:3150,w:210},{x:3360,w:373},{x:3733,w:210},{x:3943,w:210},{x:4153,w:210}
-  ];
+  const photos = Array.from(
+    {length:20},
+    (_,i) => "photos/" + String(i + 1).padStart(2,"0") + ".jpg?v=1"
+  );
 
   const stage = document.querySelector(".gallery-stage");
   const image = document.getElementById("galleryImage");
@@ -184,81 +180,59 @@ a.corner-content:hover{background:#111;color:#fff}
 
   let index = 0;
   let touchStartX = null;
-  let spriteReady = false;
-
-  function fitImage(){
-    const item = photos[index];
-    const aspect = item.w / spriteHeight;
-    const sw = stage.clientWidth;
-    const sh = stage.clientHeight;
-    const w = Math.min(sw, sh * aspect);
-    const h = w / aspect;
-    const scale = h / spriteHeight;
-
-    image.style.width = Math.round(w) + "px";
-    image.style.height = Math.round(h) + "px";
-    image.style.backgroundSize =
-      Math.round(spriteWidth * scale) + "px " +
-      Math.round(spriteHeight * scale) + "px";
-    image.style.backgroundPosition =
-      Math.round(-item.x * scale) + "px 0";
-  }
 
   function render(){
-    fitImage();
+    image.classList.remove("show");
     empty.style.display = "none";
     title.textContent = "";
-
     counter.textContent =
       String(index + 1).padStart(2,"0") + " / " +
       String(photos.length).padStart(2,"0");
 
+    image.onload = function(){
+      empty.style.display = "none";
+      requestAnimationFrame(function(){ image.classList.add("show"); });
+    };
+
+    image.onerror = function(){
+      image.classList.remove("show");
+      empty.textContent = "Фотография не загрузилась";
+      empty.style.display = "flex";
+    };
+
+    image.alt = "Реализованный проект " + (index + 1);
+    image.src = photos[index];
+
     prev.disabled = photos.length < 2;
     next.disabled = photos.length < 2;
-
-    if(spriteReady) image.classList.add("show");
   }
 
   function move(step){
-    if(photos.length < 2)return;
-    image.classList.remove("show");
-    index=(index+step+photos.length)%photos.length;
-    requestAnimationFrame(function(){
-      render();
-      requestAnimationFrame(function(){image.classList.add("show")});
-    });
+    if(photos.length < 2) return;
+    index = (index + step + photos.length) % photos.length;
+    render();
   }
 
-  prev.addEventListener("click",function(){move(-1)});
-  next.addEventListener("click",function(){move(1)});
+  prev.addEventListener("click",function(){ move(-1); });
+  next.addEventListener("click",function(){ move(1); });
 
   document.addEventListener("keydown",function(e){
-    if(e.key==="ArrowLeft")move(-1);
-    if(e.key==="ArrowRight")move(1);
+    if(e.key === "ArrowLeft") move(-1);
+    if(e.key === "ArrowRight") move(1);
   });
 
   stage.addEventListener("touchstart",function(e){
-    touchStartX=e.changedTouches[0].clientX;
+    touchStartX = e.changedTouches[0].clientX;
   },{passive:true});
 
   stage.addEventListener("touchend",function(e){
-    if(touchStartX===null)return;
-    const dx=e.changedTouches[0].clientX-touchStartX;
-    if(Math.abs(dx)>45)move(dx>0?-1:1);
-    touchStartX=null;
+    if(touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if(Math.abs(dx) > 45) move(dx > 0 ? -1 : 1);
+    touchStartX = null;
   },{passive:true});
 
-  window.addEventListener("resize",fitImage);
-
-  const spriteUrl = "photos/gallery.webp?v=21";
-  const preload = new Image();
-  preload.onload = function(){
-    image.style.backgroundImage = 'url("' + spriteUrl + '")';
-    spriteReady = true;
-    render();
-    requestAnimationFrame(function(){image.classList.add("show")});
-  };
-  preload.src = spriteUrl;
+  render();
 })();
 </script>
 </body>
