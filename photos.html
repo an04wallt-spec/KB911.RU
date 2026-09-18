@@ -7,66 +7,30 @@
 <link href="https://fonts.cdnfonts.com/css/d-din" rel="stylesheet">
 <style>
 @font-face{font-family:"Bahnschrift Local";src:local("Bahnschrift");font-style:normal;font-weight:100 900}
-:root{--ink:#111;--paper:#fff;--bg:#f2f2f0}
+:root{--ink:#111;--paper:#fff;--bg:#f2f2f0;--corner-w:max(118px,7.9vw);--corner-h:max(24px,3.1vh)}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"D-DIN","Bahnschrift Local","Bahnschrift","Arial Narrow",Arial,sans-serif}
 body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
 .sheet{position:relative;width:calc(100vw - 24px);height:calc(100vh - 24px);min-height:690px;background:var(--paper);overflow:hidden}
 
-/* Большое поле страницы 04 */
-.gallery-shell{
-  position:absolute;
-  left:1.35vw;
-  top:1.35vh;
-  right:.55vw;
-  bottom:1.35vh;
-}
-.gallery-frame{
-  position:absolute;
-  left:0;
-  top:0;
-  right:0;
-  bottom:0;
-  border:1px solid var(--ink);
-  background:#fff;
-}
+.gallery-shell{position:absolute;left:1.35vw;top:1.35vh;right:.55vw;bottom:1.35vh}
+.gallery-frame{position:absolute;inset:0;border:1px solid var(--ink);background:#fff}
+
 .gallery-stage{
   position:absolute;
-  left:clamp(24px,2vw,42px);
-  top:clamp(24px,3.2vh,54px);
-  right:clamp(24px,2vw,42px);
-  bottom:clamp(64px,8vh,112px);
+  left:clamp(24px,2.2vw,46px);
+  top:clamp(42px,5.2vh,74px);
+  right:clamp(24px,2.2vw,46px);
+  bottom:clamp(46px,5.8vh,82px);
   display:flex;
   align-items:center;
   justify-content:center;
-  overflow:hidden;
+  overflow:hidden
 }
-.gallery-image{
-  display:block;
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  object-position:center;
-  opacity:0;
-  transition:opacity .35s ease;
-}
+.gallery-image{display:block;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;transition:opacity .35s ease}
 .gallery-image.show{opacity:1}
-.empty-state{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  font-size:clamp(16px,1.05vw,24px);
-  font-style:italic;
-  color:#777;
-}
-.gallery-nav{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-}
+.empty-state{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(16px,1.05vw,24px);font-style:italic;color:#777}
+.gallery-nav{position:absolute;inset:0;pointer-events:none}
 .gallery-arrow{
   pointer-events:auto;
   position:absolute;
@@ -82,123 +46,78 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;pad
   line-height:1;
   cursor:pointer;
   opacity:.58;
-  transition:opacity .18s ease,background .18s ease;
+  transition:opacity .18s ease,background .18s ease
 }
 .gallery-arrow:hover{opacity:1;background:rgba(0,0,0,.035)}
 .gallery-arrow.prev{left:0}
 .gallery-arrow.next{right:0}
 .gallery-arrow:disabled{opacity:.16;cursor:default;background:transparent}
+
 .gallery-meta{
   position:absolute;
   left:50%;
-  bottom:2.25vh;
+  bottom:1.65vh;
   transform:translateX(-50%);
   display:flex;
-  flex-direction:column;
   align-items:center;
-  gap:.45vh;
-  font-style:italic;
+  gap:.8vw;
   white-space:nowrap;
+  font-size:clamp(11px,.72vw,16px);
+  font-style:italic
 }
-.gallery-title{font-size:clamp(12px,.8vw,18px);min-height:1.2em}
-.gallery-counter{font-size:clamp(12px,.72vw,16px);letter-spacing:.08em}
+.gallery-title:empty{display:none}
+.gallery-counter{letter-spacing:.08em}
 
-/* Два оставшихся фрагмента прежней правой колонки */
+/* Четыре одинаковые узкие рамки */
 .corner{
   position:absolute;
-  right:.55vw;
-  width:7.9vw;
-  min-width:118px;
+  width:var(--corner-w);
+  height:var(--corner-h);
   z-index:5;
   background:#fff;
-  border:1px solid var(--ink);
+  border:1px solid var(--ink)
 }
-.corner-top{
-  top:1.35vh;
-  height:3.1vh;
-  min-height:24px;
-}
-.corner-bottom{
-  bottom:1.35vh;
-  height:11.6vh;
-  min-height:88px;
-}
-.site-content{
+.corner.tl{left:1.35vw;top:1.35vh}
+.corner.tr{right:.55vw;top:1.35vh}
+.corner.bl{left:1.35vw;bottom:1.35vh}
+.corner.br{right:.55vw;bottom:1.35vh}
+
+.corner-content{
+  width:100%;
   height:100%;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  padding:0 .4vw;
-  white-space:nowrap;
-  font-size:clamp(15px,1vw,24px);
-  font-style:italic;
-}
-.site-content .year{
-  flex:0 0 auto;
-  margin-left:.5vw;
-  font-size:clamp(10px,.65vw,16px);
-  font-style:normal;
-}
-.bottom-nav{
-  height:100%;
-  display:grid;
-  grid-template-rows:repeat(3,1fr);
-}
-.bottom-nav a{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+  justify-content:center;
   padding:0 .45vw;
+  white-space:nowrap;
+  overflow:hidden;
   color:var(--ink);
   text-decoration:none;
-  font-size:clamp(10px,.68vw,15px);
-  font-style:italic;
-  border-bottom:1px solid var(--ink);
+  font:italic 400 clamp(12px,.78vw,17px)/1 "D-DIN","Bahnschrift Local","Bahnschrift","Arial Narrow",Arial,sans-serif;
+  letter-spacing:.01em
 }
-.bottom-nav a:last-child{border-bottom:0}
-.bottom-nav a::after{content:"→";font-size:1.1em}
-.bottom-nav a:hover,.bottom-nav a.active{background:#111;color:#fff}
-.bottom-nav a.active{cursor:default}
+a.corner-content:hover{background:#111;color:#fff}
 
-/* Вырезы под два служебных блока: визуально рамка страницы "ломается" */
-.corner-mask{
-  position:absolute;
-  right:0;
-  width:calc(7.9vw + 1px);
-  min-width:119px;
-  background:#fff;
-  z-index:3;
-  pointer-events:none;
-}
-.corner-mask.top{
-  top:-1px;
-  height:calc(3.1vh + 2px);
-  min-height:26px;
-}
-.corner-mask.bottom{
-  bottom:-1px;
-  height:calc(11.6vh + 2px);
-  min-height:90px;
-}
+/* Маски разрывают общую рамку ровно под угловыми блоками */
+.corner-mask{position:absolute;width:calc(var(--corner-w) + 2px);height:calc(var(--corner-h) + 2px);background:#fff;z-index:3;pointer-events:none}
+.corner-mask.tl{left:-1px;top:-1px}
+.corner-mask.tr{right:-1px;top:-1px}
+.corner-mask.bl{left:-1px;bottom:-1px}
+.corner-mask.br{right:-1px;bottom:-1px}
 
 @media(max-width:760px){
+  :root{--corner-w:118px;--corner-h:22px}
   body{padding:0;background:#fff;align-items:stretch;height:100dvh;min-height:0;overflow:hidden}
   .sheet{width:100%;height:100dvh;min-height:0}
   .gallery-shell{left:12px;top:12px;right:8px;bottom:12px}
-  .gallery-stage{left:14px;right:14px;top:42px;bottom:92px}
+  .gallery-stage{left:14px;right:14px;top:44px;bottom:44px}
   .gallery-arrow{width:34px;height:62px;font-size:30px}
-  .gallery-meta{bottom:18px}
-  .gallery-title{font-size:10px}
-  .gallery-counter{font-size:9px}
-  .corner{right:8px;width:118px;min-width:0}
-  .corner-top{top:12px;height:22px;min-height:0}
-  .corner-bottom{bottom:12px;height:80px;min-height:0}
-  .site-content{padding:0 6px;font-size:13px}
-  .site-content .year{margin-left:8px;font-size:8px}
-  .bottom-nav a{padding:0 6px;font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",Arial,sans-serif;font-size:9px}
-  .corner-mask{width:119px;min-width:0}
-  .corner-mask.top{height:24px;min-height:0}
-  .corner-mask.bottom{height:82px;min-height:0}
+  .gallery-meta{bottom:28px;font-size:9px}
+  .corner.tl,.corner.bl{left:12px}
+  .corner.tr,.corner.br{right:8px}
+  .corner.tl,.corner.tr{top:12px}
+  .corner.bl,.corner.br{bottom:12px}
+  .corner-content{padding:0 6px;font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",Arial,sans-serif;font-size:9.5px}
 }
 </style>
 </head>
@@ -206,8 +125,10 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;pad
 <main class="sheet">
   <section class="gallery-shell">
     <div class="gallery-frame"></div>
-    <div class="corner-mask top"></div>
-    <div class="corner-mask bottom"></div>
+    <div class="corner-mask tl"></div>
+    <div class="corner-mask tr"></div>
+    <div class="corner-mask bl"></div>
+    <div class="corner-mask br"></div>
 
     <div class="gallery-stage">
       <img class="gallery-image" id="galleryImage" alt="">
@@ -220,24 +141,25 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;pad
     </div>
 
     <div class="gallery-meta">
-      <div class="gallery-title" id="galleryTitle"></div>
-      <div class="gallery-counter" id="galleryCounter">00 / 00</div>
+      <span class="gallery-title" id="galleryTitle"></span>
+      <span class="gallery-counter" id="galleryCounter">00 / 00</span>
     </div>
   </section>
 
-  <section class="corner corner-top">
-    <div class="site-content">
-      <span>www.kb911.ru</span>
-      <span class="year">2026</span>
-    </div>
+  <section class="corner tl">
+    <div class="corner-content">04 Реализовано</div>
   </section>
 
-  <section class="corner corner-bottom">
-    <nav class="bottom-nav">
-      <a href="drawings.html">02 Чертежи</a>
-      <a href="3d-models.html">03 3D-модели</a>
-      <a class="active" href="photos.html">04 Реализовано</a>
-    </nav>
+  <section class="corner tr">
+    <a class="corner-content" href="index.html">www.kb911.ru · 2026</a>
+  </section>
+
+  <section class="corner bl">
+    <a class="corner-content" href="drawings.html">02 Чертежи</a>
+  </section>
+
+  <section class="corner br">
+    <a class="corner-content" href="3d-models.html">03 3D-модели</a>
   </section>
 </main>
 
@@ -281,7 +203,7 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;pad
     preload.onload = function(){
       image.src = item.src;
       image.alt = item.title || "Реализованный проект";
-      requestAnimationFrame(function(){ image.classList.add("show"); });
+      requestAnimationFrame(function(){image.classList.add("show")});
     };
     preload.src = item.src;
 
@@ -295,28 +217,28 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;pad
   }
 
   function move(step){
-    if(photos.length < 2) return;
-    index = (index + step + photos.length) % photos.length;
+    if(photos.length < 2)return;
+    index=(index+step+photos.length)%photos.length;
     render();
   }
 
-  prev.addEventListener("click",function(){ move(-1); });
-  next.addEventListener("click",function(){ move(1); });
+  prev.addEventListener("click",function(){move(-1)});
+  next.addEventListener("click",function(){move(1)});
 
   document.addEventListener("keydown",function(e){
-    if(e.key === "ArrowLeft") move(-1);
-    if(e.key === "ArrowRight") move(1);
+    if(e.key==="ArrowLeft")move(-1);
+    if(e.key==="ArrowRight")move(1);
   });
 
   document.querySelector(".gallery-stage").addEventListener("touchstart",function(e){
-    touchStartX = e.changedTouches[0].clientX;
+    touchStartX=e.changedTouches[0].clientX;
   },{passive:true});
 
   document.querySelector(".gallery-stage").addEventListener("touchend",function(e){
-    if(touchStartX === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if(Math.abs(dx) > 45) move(dx > 0 ? -1 : 1);
-    touchStartX = null;
+    if(touchStartX===null)return;
+    const dx=e.changedTouches[0].clientX-touchStartX;
+    if(Math.abs(dx)>45)move(dx>0?-1:1);
+    touchStartX=null;
   },{passive:true});
 
   render();
