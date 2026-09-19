@@ -11,23 +11,21 @@
 html,body{margin:0;min-height:100%;background:#fff;color:#111}
 body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",Arial,sans-serif}
 .page{width:min(92vw,960px);margin:0 auto;padding:clamp(14px,2.5vw,28px) 0 40px}
+.photo-wrap{position:relative;width:100%;overflow:hidden;background:#fff}
 .photo{
   display:block;
   width:100%;
   height:auto;
-  opacity:0;
-  filter:blur(28px) brightness(2.25);
-  transform:scale(1.015);
-  transition:
-    opacity 6s ease,
-    filter 6s ease,
-    transform 6s ease;
 }
-.photo.show{
+.fog{
+  position:absolute;
+  inset:0;
+  background:#fff;
   opacity:1;
-  filter:blur(0) brightness(1);
-  transform:scale(1);
+  pointer-events:none;
+  transition:opacity 6s ease;
 }
+.fog.hide{opacity:0}
 .copy{
   margin-top:clamp(18px,2.5vw,28px);
   text-align:center;
@@ -44,13 +42,16 @@ body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",
   .copy{padding:0 16px;font-size:clamp(16px,4.4vw,20px);line-height:1.42}
 }
 @media(prefers-reduced-motion:reduce){
-  .photo{opacity:1;filter:none;transform:none;transition:none}
+  .fog{display:none}
 }
 </style>
 </head>
 <body>
 <main class="page">
-  <img class="photo" id="photo" src="pifa-photo.jpg" alt="Валерий Анатольевич в мастерской">
+  <div class="photo-wrap">
+    <img class="photo" id="photo" src="pifa-photo.jpg?v=2" alt="Валерий Анатольевич в мастерской">
+    <div class="fog" id="fog" aria-hidden="true"></div>
+  </div>
 
   <section class="copy" id="copy" aria-label="Описание">
     <p class="line" data-text="Меня зовут Валерий Анатольевич!"></p>
@@ -66,6 +67,7 @@ body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",
 <script>
 (()=>{
   const photo=document.getElementById("photo");
+  const fog=document.getElementById("fog");
   const lines=[...document.querySelectorAll(".line")];
   const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let typingStarted=false;
@@ -86,11 +88,11 @@ body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",
   }
 
   function startReveal(){
-    requestAnimationFrame(()=>photo.classList.add("show"));
     if(reduced){
       typeLines();
       return;
     }
+    requestAnimationFrame(()=>fog.classList.add("hide"));
     window.setTimeout(typeLines,6100);
   }
 
