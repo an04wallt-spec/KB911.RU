@@ -6,17 +6,57 @@
 <title>PIFA — KB911</title>
 <meta name="robots" content="noindex,nofollow,noarchive">
 <style>
-@font-face{font-family:"Bahnschrift Local";src:local("Bahnschrift");font-style:normal;font-weight:100 900}
+@font-face{
+  font-family:"Bahnschrift Local";
+  src:local("Bahnschrift");
+  font-style:normal;
+  font-weight:100 900;
+}
+
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:#fff;color:#111}
-body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",Arial,sans-serif}
-.page{width:min(92vw,960px);margin:0 auto;padding:clamp(14px,2.5vw,28px) 0 40px}
-.photo-wrap{position:relative;width:100%;overflow:hidden;background:#fff}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:#fff;
+  color:#111;
+}
+
+body{
+  font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",Arial,sans-serif;
+}
+
+.page{
+  width:min(92vw,960px);
+  margin:0 auto;
+  padding:clamp(14px,2.5vw,28px) 0 40px;
+}
+
+.photo-wrap{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+  background:#fff;
+}
+
 .photo{
   display:block;
   width:100%;
   height:auto;
+  transform:scale(1);
+  transform-origin:center center;
+  will-change:transform;
 }
+
+.photo.alive{
+  animation:slowZoom 24s ease-in-out infinite alternate;
+}
+
+@keyframes slowZoom{
+  from{transform:scale(1)}
+  to{transform:scale(1.018)}
+}
+
 .fog{
   position:absolute;
   inset:0;
@@ -24,8 +64,49 @@ body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",
   opacity:1;
   pointer-events:none;
   transition:opacity 6s ease;
+  z-index:3;
 }
-.fog.hide{opacity:0}
+
+.fog.hide{
+  opacity:0;
+}
+
+.dust-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  opacity:0;
+  transition:opacity 2.5s ease;
+  z-index:2;
+}
+
+.dust-layer.show{
+  opacity:1;
+}
+
+.dust{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,.22);
+  filter:blur(.6px);
+  animation-name:dustFloat;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+  animation-direction:alternate;
+}
+
+@keyframes dustFloat{
+  from{
+    transform:translate3d(0,0,0);
+    opacity:.10;
+  }
+  to{
+    transform:translate3d(var(--dx),var(--dy),0);
+    opacity:.34;
+  }
+}
+
 .copy{
   margin-top:clamp(18px,2.5vw,28px);
   text-align:center;
@@ -33,12 +114,18 @@ body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",
   line-height:1.5;
   letter-spacing:-.01em;
 }
+
 .line{
   min-height:1.5em;
   margin:0 0 .35em;
 }
+
 @media(max-width:560px){
-  .page{width:100%;padding:0 0 18px}
+  .page{
+    width:100%;
+    padding:0 0 18px;
+  }
+
   .copy{
     margin-top:10px;
     padding:0 10px;
@@ -46,13 +133,17 @@ body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",
     line-height:1.22;
     letter-spacing:-.03em;
   }
+
   .line{
     min-height:1.22em;
     margin:0 0 .08em;
   }
 }
+
 @media(prefers-reduced-motion:reduce){
   .fog{display:none}
+  .dust-layer{display:none}
+  .photo.alive{animation:none}
 }
 </style>
 </head>
@@ -60,6 +151,7 @@ body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",
 <main class="page">
   <div class="photo-wrap">
     <img class="photo" id="photo" src="pifa-photo.jpg?v=2" alt="Валерий Анатольевич в мастерской">
+    <div class="dust-layer" id="dustLayer" aria-hidden="true"></div>
     <div class="fog" id="fog" aria-hidden="true"></div>
   </div>
 
@@ -78,15 +170,46 @@ body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",
 (()=>{
   const photo=document.getElementById("photo");
   const fog=document.getElementById("fog");
+  const dustLayer=document.getElementById("dustLayer");
   const lines=[...document.querySelectorAll(".line")];
   const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let typingStarted=false;
 
   const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
+  function createDust(){
+    const count=window.innerWidth<=560 ? 10 : 16;
+    dustLayer.innerHTML="";
+
+    for(let i=0;i<count;i++){
+      const dot=document.createElement("span");
+      dot.className="dust";
+
+      const size=(Math.random()*3.2+1.4).toFixed(2);
+      const left=(Math.random()*100).toFixed(2);
+      const top=(Math.random()*58).toFixed(2);
+      const dx=(Math.random()*18-9).toFixed(2)+"px";
+      const dy=(Math.random()*22+8).toFixed(2)+"px";
+      const delay=(Math.random()*8).toFixed(2)+"s";
+      const duration=(Math.random()*10+12).toFixed(2)+"s";
+
+      dot.style.width=size+"px";
+      dot.style.height=size+"px";
+      dot.style.left=left+"%";
+      dot.style.top=top+"%";
+      dot.style.setProperty("--dx",dx);
+      dot.style.setProperty("--dy",dy);
+      dot.style.animationDelay=delay;
+      dot.style.animationDuration=duration;
+
+      dustLayer.appendChild(dot);
+    }
+  }
+
   async function typeLines(){
     if(typingStarted)return;
     typingStarted=true;
+
     for(const line of lines){
       const text=line.dataset.text;
       for(const ch of text){
@@ -98,16 +221,30 @@ body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",
   }
 
   function startReveal(){
+    createDust();
+
     if(reduced){
+      dustLayer.classList.add("show");
+      photo.classList.add("alive");
       typeLines();
       return;
     }
-    requestAnimationFrame(()=>fog.classList.add("hide"));
+
+    requestAnimationFrame(()=>{
+      fog.classList.add("hide");
+      dustLayer.classList.add("show");
+      photo.classList.add("alive");
+    });
+
     window.setTimeout(typeLines,6100);
   }
 
   if(photo.complete)startReveal();
   else photo.addEventListener("load",startReveal,{once:true});
+
+  window.addEventListener("resize",()=>{
+    createDust();
+  });
 })();
 </script>
 </body>
