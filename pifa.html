@@ -38,8 +38,18 @@ body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",
   margin:0 0 .35em;
 }
 @media(max-width:560px){
-  .page{width:100%;padding:0 0 28px}
-  .copy{padding:0 16px;font-size:clamp(16px,4.4vw,20px);line-height:1.42}
+  .page{width:100%;padding:0 0 18px}
+  .copy{
+    margin-top:10px;
+    padding:0 10px;
+    font-size:clamp(12px,3.15vw,14px);
+    line-height:1.22;
+    letter-spacing:-.03em;
+  }
+  .line{
+    min-height:1.22em;
+    margin:0 0 .08em;
+  }
 }
 @media(prefers-reduced-motion:reduce){
   .fog{display:none}
