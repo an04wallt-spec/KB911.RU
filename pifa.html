@@ -88,9 +88,9 @@ body{
 .dust{
   position:absolute;
   border-radius:50%;
-  background:rgba(255,255,255,.72);
-  box-shadow:0 0 7px rgba(255,255,255,.42);
-  filter:blur(.35px);
+  background:rgba(255,255,255,.62);
+  box-shadow:0 0 4px rgba(255,255,255,.28);
+  filter:blur(.15px);
   animation-name:dustFloat;
   animation-timing-function:ease-in-out;
   animation-iteration-count:infinite;
@@ -99,12 +99,12 @@ body{
 
 @keyframes dustFloat{
   from{
-    transform:translate3d(0,0,0) scale(.8);
-    opacity:.18;
+    transform:translate3d(0,0,0) scale(.92);
+    opacity:.10;
   }
   to{
-    transform:translate3d(var(--dx),var(--dy),0) scale(1.15);
-    opacity:.58;
+    transform:translate3d(var(--dx),var(--dy),0) scale(1.12);
+    opacity:.42;
   }
 }
 
@@ -178,26 +178,43 @@ body{
 
   const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
+  function inFaceZone(xPercent,yPercent){
+    return xPercent>=30 && xPercent<=72 && yPercent>=8 && yPercent<=46;
+  }
+
+  function pickDustPosition(){
+    let x,y,attempts=0;
+
+    do{
+      const fromDesk=Math.random()<0.68;
+      x=Math.random()*100;
+      y=fromDesk ? 46+Math.random()*48 : 6+Math.random()*86;
+      attempts++;
+      if(attempts>40)break;
+    }while(inFaceZone(x,y));
+
+    return {x,y};
+  }
+
   function createDust(){
-    const count=window.innerWidth<=560 ? 16 : 24;
+    const count=window.innerWidth<=560 ? 34 : 52;
     dustLayer.innerHTML="";
 
     for(let i=0;i<count;i++){
       const dot=document.createElement("span");
       dot.className="dust";
 
-      const size=(Math.random()*4+2).toFixed(2);
-      const left=(Math.random()*100).toFixed(2);
-      const top=(Math.random()*72).toFixed(2);
-      const dx=(Math.random()*36-18).toFixed(2)+"px";
-      const dy=(Math.random()*42+16).toFixed(2)+"px";
-      const delay=(Math.random()*5).toFixed(2)+"s";
-      const duration=(Math.random()*7+9).toFixed(2)+"s";
+      const pos=pickDustPosition();
+      const size=(Math.random()*1.5+1.1).toFixed(2);
+      const dx=(Math.random()*28-14).toFixed(2)+"px";
+      const dy=(Math.random()*36-18).toFixed(2)+"px";
+      const delay=(Math.random()*6).toFixed(2)+"s";
+      const duration=(Math.random()*8+10).toFixed(2)+"s";
 
       dot.style.width=size+"px";
       dot.style.height=size+"px";
-      dot.style.left=left+"%";
-      dot.style.top=top+"%";
+      dot.style.left=pos.x.toFixed(2)+"%";
+      dot.style.top=pos.y.toFixed(2)+"%";
       dot.style.setProperty("--dx",dx);
       dot.style.setProperty("--dy",dy);
       dot.style.animationDelay=delay;
