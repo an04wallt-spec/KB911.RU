@@ -88,9 +88,11 @@ body{
 .dust{
   position:absolute;
   border-radius:50%;
-  background:rgba(255,255,255,.62);
-  box-shadow:0 0 4px rgba(255,255,255,.28);
-  filter:blur(.15px);
+  background:rgba(255,255,255,.82);
+  box-shadow:
+    0 0 4px rgba(255,255,255,.55),
+    0 0 8px rgba(255,255,255,.18);
+  filter:blur(.08px);
   animation-name:dustFloat;
   animation-timing-function:ease-in-out;
   animation-iteration-count:infinite;
@@ -99,12 +101,12 @@ body{
 
 @keyframes dustFloat{
   from{
-    transform:translate3d(0,0,0) scale(.92);
-    opacity:.10;
+    transform:translate3d(0,0,0) scale(.9);
+    opacity:.16;
   }
   to{
-    transform:translate3d(var(--dx),var(--dy),0) scale(1.12);
-    opacity:.42;
+    transform:translate3d(var(--dx),var(--dy),0) scale(1.14);
+    opacity:.62;
   }
 }
 
@@ -186,9 +188,9 @@ body{
     let x,y,attempts=0;
 
     do{
-      const fromDesk=Math.random()<0.68;
+      const fromDesk=Math.random()<0.78;
       x=Math.random()*100;
-      y=fromDesk ? 46+Math.random()*48 : 6+Math.random()*86;
+      y=fromDesk ? 44+Math.random()*50 : 5+Math.random()*88;
       attempts++;
       if(attempts>40)break;
     }while(inFaceZone(x,y));
@@ -197,7 +199,7 @@ body{
   }
 
   function createDust(){
-    const count=window.innerWidth<=560 ? 34 : 52;
+    const count=window.innerWidth<=560 ? 70 : 115;
     dustLayer.innerHTML="";
 
     for(let i=0;i<count;i++){
@@ -205,11 +207,11 @@ body{
       dot.className="dust";
 
       const pos=pickDustPosition();
-      const size=(Math.random()*1.5+1.1).toFixed(2);
-      const dx=(Math.random()*28-14).toFixed(2)+"px";
-      const dy=(Math.random()*36-18).toFixed(2)+"px";
+      const size=(Math.random()*1.1+0.9).toFixed(2);
+      const dx=(Math.random()*34-17).toFixed(2)+"px";
+      const dy=(Math.random()*42-21).toFixed(2)+"px";
       const delay=(Math.random()*6).toFixed(2)+"s";
-      const duration=(Math.random()*8+10).toFixed(2)+"s";
+      const duration=(Math.random()*7+9).toFixed(2)+"s";
 
       dot.style.width=size+"px";
       dot.style.height=size+"px";
