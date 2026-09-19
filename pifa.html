@@ -10,98 +10,92 @@
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:#fff;color:#111}
 body{font-family:"Bahnschrift Local","Bahnschrift SemiCondensed","Arial Narrow",Arial,sans-serif}
-.page{width:min(92vw,720px);margin:0 auto;padding:clamp(14px,2.5vw,28px) 0 40px}
-.photo-wrap{position:relative;width:100%;overflow:hidden;background:#fff}
-.photo{display:block;width:100%;height:auto}
-.mask{position:absolute;inset:0;pointer-events:none;background:#fff}
-.copy{visibility:hidden;margin-top:clamp(16px,2.2vw,24px);font-size:clamp(17px,2.2vw,24px);line-height:1.45;letter-spacing:-.01em;overflow-wrap:anywhere}
-.copy p{margin:0}
+.page{width:min(92vw,960px);margin:0 auto;padding:clamp(14px,2.5vw,28px) 0 40px}
+.photo{
+  display:block;
+  width:100%;
+  height:auto;
+  opacity:0;
+  filter:blur(28px) brightness(2.25);
+  transform:scale(1.015);
+  transition:
+    opacity 6s ease,
+    filter 6s ease,
+    transform 6s ease;
+}
+.photo.show{
+  opacity:1;
+  filter:blur(0) brightness(1);
+  transform:scale(1);
+}
+.copy{
+  margin-top:clamp(18px,2.5vw,28px);
+  text-align:center;
+  font-size:clamp(17px,2vw,24px);
+  line-height:1.5;
+  letter-spacing:-.01em;
+}
+.line{
+  min-height:1.5em;
+  margin:0 0 .35em;
+}
 @media(max-width:560px){
   .page{width:100%;padding:0 0 28px}
-  .copy{padding:0 16px;font-size:clamp(16px,4.4vw,20px);line-height:1.38}
+  .copy{padding:0 16px;font-size:clamp(16px,4.4vw,20px);line-height:1.42}
 }
 @media(prefers-reduced-motion:reduce){
-  .mask{display:none}
-  .copy{visibility:visible}
+  .photo{opacity:1;filter:none;transform:none;transition:none}
 }
 </style>
 </head>
 <body>
 <main class="page">
-  <div class="photo-wrap">
-    <img class="photo" id="photo" src="pifa-photo.jpg" alt="Валерий Анатольевич в мастерской">
-    <canvas class="mask" id="mask" aria-hidden="true"></canvas>
-  </div>
+  <img class="photo" id="photo" src="pifa-photo.jpg" alt="Валерий Анатольевич в мастерской">
 
-  <section class="copy" id="copy">
-    <p>Меня зовут Валерий Анатольевич! Я Заслуженный плотник Республики Узбекистан. В профессии - с 90х годов прошлого века. У меня 80й уровень и 54й разряд. Я делаю любую мебель. Делаю красиво и дорого. Звоните мне на домашний телефон +998 97 721 21 63.</p>
+  <section class="copy" id="copy" aria-label="Описание">
+    <p class="line" data-text="Меня зовут Валерий Анатольевич!"></p>
+    <p class="line" data-text="Я Заслуженный плотник Республики Узбекистан."></p>
+    <p class="line" data-text="В профессии - с 90х годов прошлого века."></p>
+    <p class="line" data-text="У меня 80й уровень и 54й разряд."></p>
+    <p class="line" data-text="Я делаю любую мебель."></p>
+    <p class="line" data-text="Делаю красиво и дорого."></p>
+    <p class="line" data-text="Звоните мне на домашний телефон +998 97 721 21 63."></p>
   </section>
 </main>
 
 <script>
 (()=>{
-  const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const photo=document.getElementById("photo");
-  const canvas=document.getElementById("mask");
-  const copy=document.getElementById("copy");
+  const lines=[...document.querySelectorAll(".line")];
+  const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let typingStarted=false;
 
-  function typeText(){
-    const p=copy.querySelector("p");
-    const full=p.textContent;
-    p.textContent="";
-    copy.style.visibility="visible";
-    let i=0;
-    function step(){
-      if(i>=full.length)return;
-      const ch=full[i++];
-      p.textContent+=ch;
-      setTimeout(step,(ch==="."||ch==="!")?650:55);
+  const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+
+  async function typeLines(){
+    if(typingStarted)return;
+    typingStarted=true;
+    for(const line of lines){
+      const text=line.dataset.text;
+      for(const ch of text){
+        line.textContent+=ch;
+        await sleep(ch==="."||ch==="!"?450:55);
+      }
+      await sleep(220);
     }
-    step();
   }
 
-  function revealPhoto(){
-    if(reduced){typeText();return}
-    const rect=photo.getBoundingClientRect();
-    const dpr=Math.min(window.devicePixelRatio||1,2);
-    canvas.width=Math.round(rect.width*dpr);
-    canvas.height=Math.round(rect.height*dpr);
-    canvas.style.width=rect.width+"px";
-    canvas.style.height=rect.height+"px";
-
-    const ctx=canvas.getContext("2d");
-    ctx.scale(dpr,dpr);
-    ctx.fillStyle="#fff";
-    ctx.fillRect(0,0,rect.width,rect.height);
-    ctx.globalCompositeOperation="destination-out";
-
-    const started=performance.now();
-    const duration=6000;
-
-    function frame(now){
-      const p=Math.min(1,(now-started)/duration);
-      const count=Math.floor(18+120*p);
-      for(let i=0;i<count;i++){
-        const x=Math.random()*rect.width;
-        const y=Math.random()*rect.height;
-        const r=(1+Math.random()*3)*(0.4+p*2.2);
-        ctx.beginPath();
-        ctx.arc(x,y,r,0,Math.PI*2);
-        ctx.fill();
-      }
-      if(p<1){
-        requestAnimationFrame(frame);
-      }else{
-        canvas.style.transition="opacity .8s ease";
-        canvas.style.opacity="0";
-        setTimeout(typeText,850);
-      }
+  function startReveal(){
+    requestAnimationFrame(()=>photo.classList.add("show"));
+    if(reduced){
+      typeLines();
+      return;
     }
-    requestAnimationFrame(frame);
+    window.setTimeout(typeLines,6100);
   }
 
-  if(photo.complete)revealPhoto();
-  else photo.addEventListener("load",revealPhoto,{once:true});
+  if(photo.complete)startReveal();
+  else photo.addEventListener("load",startReveal,{once:true});
 })();
 </script>
 </body>
