@@ -49,12 +49,12 @@ body{
 }
 
 .photo.alive{
-  animation:slowZoom 16s ease-in-out infinite alternate;
+  animation:slowZoomDesktop 12s ease-in-out infinite alternate;
 }
 
-@keyframes slowZoom{
+@keyframes slowZoomDesktop{
   from{transform:scale(1)}
-  to{transform:scale(1.035)}
+  to{transform:scale(1.05)}
 }
 
 .fog{
@@ -64,7 +64,7 @@ body{
   opacity:1;
   pointer-events:none;
   transition:opacity 6s ease;
-  z-index:3;
+  z-index:4;
 }
 
 .fog.hide{
@@ -77,8 +77,9 @@ body{
   pointer-events:none;
   overflow:hidden;
   opacity:0;
-  transition:opacity 2.5s ease;
-  z-index:2;
+  transition:opacity 1.4s ease;
+  z-index:3;
+  mix-blend-mode:screen;
 }
 
 .dust-layer.show{
@@ -88,25 +89,53 @@ body{
 .dust{
   position:absolute;
   border-radius:50%;
-  background:rgba(255,255,255,.82);
+  background:rgba(255,248,230,.88);
   box-shadow:
-    0 0 4px rgba(255,255,255,.55),
-    0 0 8px rgba(255,255,255,.18);
-  filter:blur(.08px);
+    0 0 5px rgba(255,244,220,.75),
+    0 0 10px rgba(255,244,220,.38);
+  filter:blur(.15px);
+  opacity:.22;
+  will-change:transform,opacity;
   animation-name:dustFloat;
   animation-timing-function:ease-in-out;
   animation-iteration-count:infinite;
   animation-direction:alternate;
 }
 
+.dust.soft{
+  background:rgba(255,247,230,.58);
+  box-shadow:
+    0 0 4px rgba(255,243,220,.48),
+    0 0 8px rgba(255,243,220,.20);
+}
+
+.dust.bright{
+  background:rgba(255,250,238,.97);
+  box-shadow:
+    0 0 6px rgba(255,247,232,.95),
+    0 0 12px rgba(255,247,232,.46);
+}
+
 @keyframes dustFloat{
-  from{
+  0%{
     transform:translate3d(0,0,0) scale(.9);
-    opacity:.16;
+    opacity:.14;
   }
-  to{
-    transform:translate3d(var(--dx),var(--dy),0) scale(1.14);
+  25%{
+    transform:translate3d(calc(var(--dx) * .35),calc(var(--dy) * .35),0) scale(1);
+    opacity:.38;
+  }
+  50%{
+    transform:translate3d(calc(var(--dx) * .7),calc(var(--dy) * .7),0) scale(1.08);
     opacity:.62;
+  }
+  75%{
+    transform:translate3d(calc(var(--dx) * .9),calc(var(--dy) * .9),0) scale(1.02);
+    opacity:.44;
+  }
+  100%{
+    transform:translate3d(var(--dx),var(--dy),0) scale(1.14);
+    opacity:.18;
   }
 }
 
@@ -127,6 +156,15 @@ body{
   .page{
     width:100%;
     padding:0 0 18px;
+  }
+
+  .photo.alive{
+    animation:slowZoomMobile 9s ease-in-out infinite alternate;
+  }
+
+  @keyframes slowZoomMobile{
+    from{transform:scale(1)}
+    to{transform:scale(1.075)}
   }
 
   .copy{
@@ -153,7 +191,7 @@ body{
 <body>
 <main class="page">
   <div class="photo-wrap">
-    <img class="photo" id="photo" src="pifa-photo.jpg?v=2" alt="Валерий Анатольевич в мастерской">
+    <img class="photo" id="photo" src="pifa-photo.jpg?v=4" alt="Валерий Анатольевич в мастерской">
     <div class="dust-layer" id="dustLayer" aria-hidden="true"></div>
     <div class="fog" id="fog" aria-hidden="true"></div>
   </div>
@@ -180,52 +218,6 @@ body{
 
   const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
-  function inFaceZone(xPercent,yPercent){
-    return xPercent>=30 && xPercent<=72 && yPercent>=8 && yPercent<=46;
-  }
-
-  function pickDustPosition(){
-    let x,y,attempts=0;
-
-    do{
-      const fromDesk=Math.random()<0.78;
-      x=Math.random()*100;
-      y=fromDesk ? 44+Math.random()*50 : 5+Math.random()*88;
-      attempts++;
-      if(attempts>40)break;
-    }while(inFaceZone(x,y));
-
-    return {x,y};
-  }
-
-  function createDust(){
-    const count=window.innerWidth<=560 ? 70 : 115;
-    dustLayer.innerHTML="";
-
-    for(let i=0;i<count;i++){
-      const dot=document.createElement("span");
-      dot.className="dust";
-
-      const pos=pickDustPosition();
-      const size=(Math.random()*1.1+0.9).toFixed(2);
-      const dx=(Math.random()*34-17).toFixed(2)+"px";
-      const dy=(Math.random()*42-21).toFixed(2)+"px";
-      const delay=(Math.random()*6).toFixed(2)+"s";
-      const duration=(Math.random()*7+9).toFixed(2)+"s";
-
-      dot.style.width=size+"px";
-      dot.style.height=size+"px";
-      dot.style.left=pos.x.toFixed(2)+"%";
-      dot.style.top=pos.y.toFixed(2)+"%";
-      dot.style.setProperty("--dx",dx);
-      dot.style.setProperty("--dy",dy);
-      dot.style.animationDelay=delay;
-      dot.style.animationDuration=duration;
-
-      dustLayer.appendChild(dot);
-    }
-  }
-
   async function typeLines(){
     if(typingStarted)return;
     typingStarted=true;
@@ -237,6 +229,72 @@ body{
         await sleep(ch==="."||ch==="!"?450:55);
       }
       await sleep(220);
+    }
+  }
+
+  function insideFaceZone(x,y){
+    /* Не пускаем пыль на лицо */
+    return x >= 30 && x <= 69 && y >= 6 && y <= 47;
+  }
+
+  function randomPosition(){
+    let x, y, tries = 0;
+
+    while(tries < 120){
+      const zoneRoll = Math.random();
+
+      x = Math.random() * 100;
+
+      if(zoneRoll < 0.62){
+        /* Основной источник — стол и нижняя часть */
+        y = 54 + Math.random() * 40;
+      }else if(zoneRoll < 0.86){
+        /* Средняя часть кадра */
+        y = 28 + Math.random() * 32;
+      }else{
+        /* Верхняя часть кадра */
+        y = 4 + Math.random() * 24;
+      }
+
+      if(!insideFaceZone(x,y)) break;
+      tries++;
+    }
+
+    return {x,y};
+  }
+
+  function createDust(){
+    const count = window.innerWidth <= 560 ? 90 : 150;
+    dustLayer.innerHTML = "";
+
+    for(let i=0;i<count;i++){
+      const dot=document.createElement("span");
+      const modeRoll=Math.random();
+
+      dot.className="dust";
+      if(modeRoll < 0.45) dot.classList.add("soft");
+      if(modeRoll > 0.82) dot.classList.add("bright");
+
+      const pos = randomPosition();
+
+      const size = (Math.random() * 1.7 + 0.7).toFixed(2);
+
+      const dx = (Math.random() * 44 - 22).toFixed(2) + "px";
+      const dy = (-(Math.random() * 44) - 10).toFixed(2) + "px";
+
+      const delay = (Math.random() * 3).toFixed(2) + "s";
+      const duration = (Math.random() * 4.5 + 5.5).toFixed(2) + "s";
+
+      dot.style.width = size + "px";
+      dot.style.height = size + "px";
+      dot.style.left = pos.x.toFixed(2) + "%";
+      dot.style.top = pos.y.toFixed(2) + "%";
+      dot.style.setProperty("--dx", dx);
+      dot.style.setProperty("--dy", dy);
+      dot.style.animationDelay = delay;
+      dot.style.animationDuration = duration;
+
+      dustLayer.appendChild(dot);
     }
   }
 
@@ -259,11 +317,13 @@ body{
     window.setTimeout(typeLines,6100);
   }
 
-  if(photo.complete)startReveal();
-  else photo.addEventListener("load",startReveal,{once:true});
+  if(photo.complete) startReveal();
+  else photo.addEventListener("load", startReveal, {once:true});
 
-  window.addEventListener("resize",()=>{
-    createDust();
+  let resizeTimer;
+  window.addEventListener("resize", ()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(createDust, 120);
   });
 })();
 </script>
