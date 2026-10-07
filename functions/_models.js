@@ -5,7 +5,7 @@ export function reply(value, status = 200) {
 }
 export function name(value) {
   if (typeof value !== 'string') throw new Error('Название отсутствует');
-  const result = value.normalize('NFC').trim();
+  const result = value.trim();
   if (!result || result === '.' || result === '..' || /[\u0000-\u001f\u007f/\\]/.test(result) || new TextEncoder().encode(result).length > 180) throw new Error('Недопустимое название');
   return result;
 }
@@ -72,7 +72,7 @@ export async function api(request, env) {
     }
     if (route === '/api/models/projects' && request.method === 'GET') {
       const result = await env.MODELS.list({ prefix: PREFIX, delimiter: '/', limit: 1000, cursor: url.searchParams.get('cursor') || undefined });
-      return reply({ success: true, projects: result.delimitedPrefixes.map(p => ({ name: p.slice(PREFIX.length, -1) })), cursor: result.truncated ? result.cursor : null });
+      return reply({ success: true, projects: result.delimitedPrefixes.map(p => ({ name: p.slice(PREFIX.length).replace(/\/$/, '') })), cursor: result.truncated ? result.cursor : null });
     }
     if (route === '/api/models/project' && request.method === 'GET') {
       const project = name(url.searchParams.get('project'));
