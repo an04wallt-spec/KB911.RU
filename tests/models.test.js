@@ -47,3 +47,16 @@ test('size, invalid HTML and oversized bodies reject without writing', async () 
   const r = await api(req('upload?project=p&model=m',{method:'POST',body:'x',headers:{'Content-Type':'text/html','Content-Length':String(51*1024*1024),'X-Content-SHA256':'0'.repeat(64)}}),storage);
   assert.equal(r.status,413); assert.equal(storage.MODELS.objects.size,0);
 });
+test('public URL resolves Cyrillic, spaces and literal percent without relying on router decoding', async () => {
+  const storage = env();
+  const html = '<!doctype html><html>published</html>';
+  const names = [['- Русские Сезоны', '2_Обувница'], ['Проект 100%', 'Модель %20']];
+  for (const [project, model] of names) {
+    await storage.MODELS.put(key(project, model), Buffer.from(html), {});
+    const url = 'https://kb911.ru/3d-temp/' + encodeURIComponent(project) + '/' + encodeURIComponent(model + '.html');
+    const encodedRoute = new URL(url).pathname.slice('/3d-temp/'.length).split('/');
+    const response = await serve(new Request(url), storage, encodedRoute);
+    assert.equal(response.status, 200);
+    assert.equal(await response.text(), html);
+  }
+});

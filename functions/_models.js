@@ -100,7 +100,9 @@ export async function serve(request, env, route) {
   if (!['GET', 'HEAD'].includes(request.method)) return new Response('Method not allowed', { status: 405 });
   const headers = { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow, noarchive', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer' };
   try {
-    const parts = Array.isArray(route) ? route : String(route || '').split('/');
+    const pathname = new URL(request.url).pathname;
+    if (!pathname.startsWith('/3d-temp/')) return new Response('Not found', { status: 404, headers });
+    const parts = pathname.slice('/3d-temp/'.length).split('/').map(segment => decodeURIComponent(segment));
     if (parts.length !== 2 || !parts[1].endsWith('.html')) return new Response('Not found', { status: 404, headers });
     if (!env.MODELS) return new Response('Storage unavailable', { status: 503, headers });
     const project = name(parts[0]), model = name(parts[1].slice(0, -5));
@@ -111,3 +113,4 @@ export async function serve(request, env, route) {
     return new Response(request.method === 'HEAD' ? null : object.body, { headers });
   } catch { return new Response('Not found', { status: 404, headers }); }
 }
+
