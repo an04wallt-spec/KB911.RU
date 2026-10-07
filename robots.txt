@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /3d-temp/
+Disallow: /api/models/
+Disallow: /android/
+Disallow: /tests/
