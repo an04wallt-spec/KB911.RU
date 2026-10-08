@@ -33,3 +33,7 @@ jobs:
       - name: Compile Android application
         working-directory: android/generator-b3d
         run: gradle assembleRelease --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Generator-B3D-unsigned-release
+          path: android/generator-b3d/app/build/outputs/apk/release/*.apk

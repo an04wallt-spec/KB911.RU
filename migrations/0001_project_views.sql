@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS project_views (project TEXT PRIMARY KEY, views INTEGER NOT NULL DEFAULT 0 CHECK(views >= 0));

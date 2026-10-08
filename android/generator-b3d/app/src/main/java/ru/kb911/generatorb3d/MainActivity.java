@@ -66,7 +66,14 @@ public final class MainActivity extends Activity {
     private void render(List<JSONObject> items, ModelsApi client) {
         for (JSONObject item : items) {
             if (project == null) {
-                Button open = button("▸ " + item.optString("name")); rows.addView(open); open.setOnClickListener(v -> { project = item.optString("name"); load(); });
+                LinearLayout row = new LinearLayout(this);
+                Button open = button("▸ " + item.optString("name"));
+                row.addView(open, new LinearLayout.LayoutParams(0, -2, 1));
+                String count = item.isNull("views") || !item.has("views") ? "—" : java.text.NumberFormat.getIntegerInstance().format(item.optLong("views"));
+                TextView views = text(count + "\nоткрытий", 14); views.setGravity(android.view.Gravity.RIGHT | android.view.Gravity.CENTER_VERTICAL); views.setPadding(dp(12), 0, 0, 0);
+                views.setContentDescription(item.isNull("views") || !item.has("views") ? "Счётчик открытий недоступен" : "Открытий файлов проекта: " + count);
+                row.addView(views, new LinearLayout.LayoutParams(-2, -1)); rows.addView(row);
+                open.setOnClickListener(v -> { project = item.optString("name"); load(); });
             } else {
                 LinearLayout row = new LinearLayout(this); row.setPadding(0, dp(6), 0, dp(6));
                 CheckBox check = new CheckBox(this); row.addView(check, new LinearLayout.LayoutParams(dp(48), dp(64)));

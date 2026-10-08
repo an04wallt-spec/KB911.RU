@@ -1,3 +1,4 @@
+import { projectViews, countView } from './_views.js';
 const PREFIX = 'models/';
 const MAX_BYTES = 50 * 1024 * 1024;
 export function reply(value, status = 200) {
@@ -72,7 +73,9 @@ export async function api(request, env) {
     }
     if (route === '/api/models/projects' && request.method === 'GET') {
       const result = await env.MODELS.list({ prefix: PREFIX, delimiter: '/', limit: 1000, cursor: url.searchParams.get('cursor') || undefined });
-      return reply({ success: true, projects: result.delimitedPrefixes.map(p => ({ name: p.slice(PREFIX.length).replace(/\/$/, '') })), cursor: result.truncated ? result.cursor : null });
+      const projects = result.delimitedPrefixes.map(p => ({ name: p.slice(PREFIX.length).replace(/\/$/, '') }));
+      const counts = await projectViews(env, projects.map(p => p.name));
+      return reply({ success: true, projects: projects.map(p => ({ ...p, views: counts === null ? null : (counts.get(p.name) || 0) })), cursor: result.truncated ? result.cursor : null });
     }
     if (route === '/api/models/project' && request.method === 'GET') {
       const project = name(url.searchParams.get('project'));
@@ -108,6 +111,7 @@ export async function serve(request, env, route) {
     const project = name(parts[0]), model = name(parts[1].slice(0, -5));
     const object = await env.MODELS.get(key(project, model));
     if (!object) return new Response('Not found', { status: 404, headers });
+    if (request.method === 'GET') await countView(env, project);
     headers['Content-Type'] = 'text/html; charset=utf-8';
     headers['Content-Length'] = String(object.size);
     return new Response(request.method === 'HEAD' ? null : object.body, { headers });
